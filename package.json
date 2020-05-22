@@ -1,0 +1,25 @@
+{
+  "name": "tdef",
+  "version": "1.0.0",
+  "main": "src/server/server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start:server": "nodemon --experimental-modules -r dotenv/config src/server/server.js",
+    "start:client": "npx webpack --config webpack.config.cjs"
+  },
+  "author": "ian",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.17.1",
+    "nodemon": "^2.0.4",
+    "socket.io": "^2.3.0",
+    "socket.io-client": "^2.3.0",
+    "webpack": "^4.43.0",
+    "webpack-cli": "^3.3.11"
+  },
+  "type": "module",
+  "devDependencies": {
+    "dotenv": "^8.2.0"
+  },
+  "description": ""
+}
