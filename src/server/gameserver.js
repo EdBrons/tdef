@@ -16,6 +16,10 @@ class Gameserver {
         this.last_tick = (new Date()).getTime()
         this.begin()
     }
+    // sockets have a cid and a uid
+    // the cid, client id, is unique to each client
+    // the uid, user id, links the socket to a specific ingame player
+    // uid can be shared probably
     addClient(socket, data) {
         this.sockets[socket] = data
     }
