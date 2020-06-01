@@ -47,11 +47,11 @@ function moveTowards(e, d) {
     }
 }
 
-function isMob(e) {
+export function isMob(e) {
     return e.t === 1
 }
 
-function isDef(e) {
+export function isDef(e) {
     return e.t === 0
 }
 
@@ -64,11 +64,48 @@ export class Game {
     loadDefault() {
         this.width = 100
         this.height = 100
-        let def = new Entity(50, 50, 0, 10, 0, 1)
-        this.addEntity(def)
-        for (let i = 0; i < 100; i++) {
-            let mob = new Entity(i, 0, 1, 1, 5, 1)
-            this.addEntity(mob)
+
+        let ox = 40
+        let oy = 40
+        let w = 20
+        let h = 20
+
+        for (let x = 0; x <= w; x+=2) {
+            this.addEntity(new Entity(ox + x, oy, 0, 10, 0, 3))
+        }
+        for (let x = 0; x <= w; x+=2) {
+            this.addEntity(new Entity(ox + x, oy+h, 0, 10, 0, 3))
+        }
+        for (let y = 0; y <= h; y+=2) {
+            this.addEntity(new Entity(ox, oy + y, 0, 10, 0, 3))
+        }
+        for (let y = 0; y <= h; y+=2) {
+            this.addEntity(new Entity(ox + w, oy + y, 0, 10, 0, 3))
+        }
+    }
+    spawnWave() {
+        for (let x = 0; x <= this.width; x++) {
+            this.addEntity(new Entity(x, 0, 1, 1, 1, 1))
+        }
+        for (let x = 0; x <= this.width; x++) {
+            this.addEntity(new Entity(x, this.height, 1, 1, 1, 1))
+        }
+        for (let y = 0; y <= this.height; y++) {
+            this.addEntity(new Entity(0, y, 1, 1, 1, 1))
+        }
+        for (let y = 0; y <= this.height; y++) {
+            this.addEntity(new Entity(this.width, y, 1, 1, 1, 1))
+        }
+    }
+    getInitialdata() {
+        return {
+            width: this.width,
+            height: this.height
+        }
+    }
+    getData() {
+        return {
+            entities: this.entities
         }
     }
     addEntity(e) {
@@ -112,12 +149,15 @@ export class Game {
         console.log(`Tick ${this.tick}`)
         this.updateDefenses()
         this.updateMobs()
+        if (this.tick % 10 == 0) {
+            this.spawnWave()
+        }
         this.tick++
     }
     updateDefenses() {
         this.getDefenses().forEach((d) => {
             // find entities near it to kill
-            let targets = this.getEntitiesInRadius(d.x, d.y, d.range).filter(e => e!==d)
+            let targets = this.getEntitiesInRadius(d.x, d.y, d.range).filter(e => e !== d && isMob(e))
             for (let i = 0; i < Math.min(targets.length, d.shots); i++) {
                 let target = targets[i]
                 this.attack(d, target)
