@@ -36,7 +36,8 @@ class City {
     shrink() {
         this.population--
         if (this.population < 1) {
-            // TODO: what to do if starvation at 1
+            this.population = 1
+            this.growth_counter = 0
         }
     }
 }
