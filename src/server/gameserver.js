@@ -1,5 +1,3 @@
-import { Map } from './game.js'
-
 class Gameserver {
     constructor() {
         this.sockets = {}
@@ -7,10 +5,6 @@ class Gameserver {
         this.ticking = false
         this.start = (new Date()).getTime()
         this.last_tick = this.start
-
-        this.map = new Map()
-        this.map.load_default()
-        //this.begin()
     }
     addClient(socket, data) {
         this.sockets[socket.id] = data
