@@ -1,6 +1,6 @@
 import * as settings from './config.js'
 
-class City {
+export class City {
     constructor() {
         this.population = 1
         this.food = 1
