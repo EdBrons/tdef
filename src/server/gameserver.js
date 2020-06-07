@@ -1,4 +1,4 @@
-import { Game } from './game.js'
+import { Map } from './game.js'
 
 class Gameserver {
     constructor() {
@@ -8,16 +8,15 @@ class Gameserver {
         this.start = (new Date()).getTime()
         this.last_tick = this.start
 
-        this.begin()
+        this.map = new Map()
+        this.map.load_default()
+        //this.begin()
     }
     addClient(socket, data) {
         this.sockets[socket.id] = data
         this.sockets[socket.id].socket = socket
     }
     begin() {
-        this.game = new Game()
-        this.game.load_default()
-
         this.startTicks()
     }
     startTicks() {
@@ -26,10 +25,9 @@ class Gameserver {
     }
     tick() {
         let now = (new Date()).getTime()
-        this.game.doTick()
         this.last_tick = now
         if (this.ticking) {
-            setTimeout(() => this.tick(), tick_len)
+            setTimeout(() => this.tick(), 1000/1)
         }
     }
     endTicks() {
