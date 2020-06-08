@@ -4,8 +4,6 @@ class Tile {
     constructor(x, y) {
         this.x = x
         this.y = y
-        this.food_production = 1
-        this.cities = []
     }
 }
 
