@@ -1,7 +1,8 @@
 import * as settings from './config.js'
 
 export class City {
-    constructor() {
+    constructor(id) {
+        this.id = id
         this.population = 1
         this.food = 1
         this.gold = 1
@@ -13,6 +14,9 @@ export class City {
     }
     get_food_consumption() {
         return this.population * settings.food_per_pop
+    }
+    get_food_production() {
+        return settings.base_food_production
     }
     // adds growth to growth counter and updates growth from that
     add_growth(val) {
@@ -46,16 +50,23 @@ export class City {
         }
     }
     get_food_balance() {
-        return -this.get_food_consumption()
+        return this.get_food_production()
     }
     // consumes food, and updates growth
     update_growth() {
         let food_balance = this.get_food_balance()
-        this.set_starving(food_balance < 0)
-        this.add_growth(food_balance)
+        let consumed_food = Math.min(this.food + food_balance, this.get_food_consumption())
+        let leftovers = food_balance - consumed_food
+        console.log(food_balance)
+
+        this.set_starving(consumed_food < this.get_food_consumption())
+        this.add_growth(consumed_food)
+
+        if (leftovers > 0) this.food += leftovers
     }
     set_starving(val) {
         this.is_starving = val
+        if (val) console.log('on noes')
     }
     get_gold_balance() {
         return this.get_tax()

@@ -1,3 +1,5 @@
+import { Game } from '../game/game.js'
+
 class Gameserver {
     constructor() {
         this.sockets = {}
@@ -5,6 +7,9 @@ class Gameserver {
         this.ticking = false
         this.start = (new Date()).getTime()
         this.last_tick = this.start
+
+        this.game = new Game()
+        this.game.do_tests()
     }
     addClient(socket, data) {
         this.sockets[socket.id] = data
