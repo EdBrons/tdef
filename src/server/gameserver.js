@@ -9,7 +9,6 @@ class Gameserver {
         this.last_tick = this.start
 
         this.game = new Game()
-        this.game.do_tests()
     }
     addClient(socket, data) {
         this.sockets[socket.id] = data

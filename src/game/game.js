@@ -5,8 +5,6 @@ import { Faction } from './faction.js'
 export class Game {
     constructor() {
         this.map = new Map(settings.map_width, settings.map_height)
-        this.factions = new Faction()
-    }
-    do_tests() {
+        this.map.load_test()
     }
 }
