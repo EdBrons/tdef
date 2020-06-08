@@ -1,5 +1,11 @@
 import * as settings from './config.js'
 
+class Items {
+    constructor() {
+        this.vals = new Array(settings.item_count).fill(0)
+    }
+}
+
 class Faction {
     constructor(id) {
         this.id = id
