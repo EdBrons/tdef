@@ -1,5 +1,4 @@
 import * as settings from './config.js'
-import { City } from './city.js'
 
 class Tile {
     constructor(x, y) {
@@ -7,13 +6,6 @@ class Tile {
         this.y = y
         this.food_production = 1
         this.cities = []
-    }
-    add_city(city) {
-        this.cities.push(city)
-    }
-    remove_city(city) {
-        i = this.cities.indexOf(city)
-        if (i != -1) this.cities.splice(i, 1)
     }
 }
 
@@ -35,12 +27,5 @@ export class Map {
     }
     get_tile(x, y) {
         return this.tiles[y][x]
-    }
-    get_cities() {
-        return this.tiles.flat().map(t => t.cities).flat()
-    }
-    create_city(x, y) {
-        let city = new City(this.get_new_id())
-        this.get_tile(x, y).add_city(city)
     }
 }
