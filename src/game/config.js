@@ -7,3 +7,4 @@ export const growth_cost_factor = 5
 // map stuff
 export const map_width = 5
 export const map_height = 5
+export const tile_size = 16
