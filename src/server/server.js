@@ -4,9 +4,6 @@ import path from 'path'
 import IO from 'socket.io'
 import { port } from './config.js'
 
-import Login from './login.js'
-import Gameserver from './gameserver.js'
-
 const app = express()
 const server = http.createServer(app)
 const __dirname = path.resolve()
@@ -23,5 +20,5 @@ server.listen(port, () => {
 })
 
 io.on('connection', (socket) => {
-    Login.onConnection(socket)
+    console.log('penis')
 })
