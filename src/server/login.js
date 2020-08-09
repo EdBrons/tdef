@@ -4,11 +4,9 @@ import Gameserver from './gameserver.js'
 class Login {
     constructor() {
         this.sockets = {}
-        this.cid_x = 0
     }
     onConnection(socket) {
-        this.sockets[socket] = { cid: this.cid_x }
-        this.cid_x++
+        this.sockets[socket] = {}
         socket.on('login', data => this.onLogin(socket, data))
     }
     onLogin(socket, data) {
@@ -16,7 +14,6 @@ class Login {
     }
     login(socket, data) {
         data.success = true
-        data.cid = this.sockets[socket].cid 
         socket.emit('loginres', data)
         Gameserver.addClient(socket, data)
     }

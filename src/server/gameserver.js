@@ -2,7 +2,7 @@ import { Game } from '../game/game.js'
 
 class Gameserver {
     constructor() {
-        this.sockets = {}
+        this.players = {}
 
         this.ticking = false
         this.start = (new Date()).getTime()
@@ -11,8 +11,8 @@ class Gameserver {
         this.game = new Game()
     }
     addClient(socket, data) {
-        this.sockets[socket.id] = data
-        this.sockets[socket.id].socket = socket
+        this.players[socket.id] = data
+        this.players[socket.id].socket = socket
     }
     begin() {
         this.startTicks()
