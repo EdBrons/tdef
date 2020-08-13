@@ -15,6 +15,8 @@ app.get('/', (req, res) => {
     res.sendFile(__dirname + '/dist/index.html')
 })
 
+import { mysim } from '../shared/mysim.js'
+
 server.listen(port, () => {
     console.log(`Server running on port ${port}`)
 })
