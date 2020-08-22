@@ -1,11 +1,25 @@
-#app {
-    margin: 0;
-    width: 100%;
-    height: 100%;
+body {
+    overflow: hidden;
 }
 
-#maincanvas {
+#map-canvas {
     position: absolute;
     left: 0;
     top: 0;
+    z-index: -1;
+    image-rendering: -moz-crisp-edges;
+    image-rendering: -webkit-crisp-edges;
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
+}
+
+#canvas {
+    position: absolute;
+    z-index: 10;
+    left: 0;
+    top: 0;
+    image-rendering: -moz-crisp-edges;
+    image-rendering: -webkit-crisp-edges;
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
 }
