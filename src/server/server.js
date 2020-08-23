@@ -15,24 +15,22 @@ app.get('/', (req, res) => {
     res.sendFile(__dirname + '/dist/index.html')
 })
 
-import map from '../shared/map.js'
-
-function get_terrain(x, y) {
-    return map.terrain[y][x]
-}
-
-const terrain = {
-    OCEAN: 0,
-    BEACH: 1,
-    PLAINS: 2,
-    FOREST: 3,
-    HIGHLAND: 4    
-}
+import { Game } from '../shared/game.js'
 
 server.listen(port, () => {
     console.log(`Server running on port ${port}`)
 })
 
+const game = new Game()
+
 io.on('connection', (socket) => {
-    
+    game.add_player(socket)
 })
+
+let loop_interval = 1000 / 10
+let loop_helper = () => {
+    game.update()
+    setTimeout(loop_helper, loop_interval)
+}
+
+loop_helper()
