@@ -29,8 +29,6 @@ const terrain = {
     HIGHLAND: 4    
 }
 
-console.log(get_terrain(0, 0))
-
 server.listen(port, () => {
     console.log(`Server running on port ${port}`)
 })
