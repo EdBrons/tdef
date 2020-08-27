@@ -1,8 +1,9 @@
 import map_data from '../shared/map.js'
+import * as utils from '../shared/utils'
 import map from '../shared/map.js'
 
 // water, beach, plains, forest, highland
-let color = [
+let terrain_colors = [
     "#000099",
     "#0000FF",
     "#00FF00",
@@ -10,29 +11,36 @@ let color = [
     "#990000"
 ]
 
-export function draw_map(ctx, gx, gy, cw, ch, s) {
-    for (let y = gy; y < gy + ch / s; y++) {
-        for (let x = gx; x < gx + cw / s; x++) {
-            let t = map_data.terrain[y][x]
-            ctx.fillStyle = color[t]
+let city_color = "#FF0000"
+
+let unit_color = "#FFFFFF"
+
+let draw_sqaure = (ctx, color, x, y, r) => {
+    ctx.fillStyle = color
+    ctx.fillRect(x - r, y - r, r * 2, r * 2)
+}
+
+export function draw_map(ctx, top, data) {
+    // draw map
+    let ts = map_data.tile_size
+    for (let y = 0; y < map_data.height; y++) {
+        for (let x = 0; x < map_data.width; x++) {
+            let terrain = utils.terrain_at(utils.add(utils.vec(x, y), top))
+            let color = terrain_colors[terrain]
+            ctx.fillStyle = color
             ctx.fillRect(
-                x * s, y * s,
-                s, s
+                x * ts, y * ts,
+                ts, ts
             )
         }
     }
-}
-
-let unit_onscreen = (u, gx, gy, cw, ch, s) => {
-    return  gx * map.tile_size < u.x && gy * map.tile_size < u.y 
-            && (gx + cw / s) * map.tile_size > u.x && (gy + ch / s) * map.tile_size > u.y 
-}
-
-export function draw_units(ctx, gx, gy, cw, ch, s, units) {
-    if (!units) return
-    let r = 3
-    units.filter(u => unit_onscreen(u, gx, gy, cw, ch, s)).forEach(u => {
-        ctx.fillStyle = "#000000"
-        ctx.fillRect(u.x - r, u.y - r, 2*r, 2*r)
+    if (!data) return
+    // draw cities
+    data.cities.forEach(c => {
+        draw_sqaure(ctx, city_color, c.pos.x * ts, c.pos.y * ts, 4)
+    })
+    // draw units
+    data.units.forEach(u => {
+        draw_sqaure(ctx, unit_color, u.pos.x * ts, u.pos.y * ts, 1)
     })
 }

@@ -28,6 +28,7 @@ io.on('connection', (socket) => {
 })
 
 let loop_interval = 1000 / 10
+
 let loop_helper = () => {
     game.update()
     setTimeout(loop_helper, loop_interval)

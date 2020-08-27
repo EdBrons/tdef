@@ -1,43 +1,21 @@
 import io from 'socket.io-client'
-import { init, get_mouse_data } from './input'
-import { draw_map, draw_units } from './draw'
-import map from '../shared/map'
-
-//init()
+import * as utils from '../shared/utils'
+import { draw_map } from './draw'
 
 const socket = io()
 let canvas = document.getElementById('canvas')
 let c = canvas.getContext('2d')
-let s = 16
-let game_data = {}
+let s = .75
+let data = {}
+c.scale(s, s)
 
-let resize_canvas = () => {
+socket.on('update', (d) => { data = d; default_draw() })
+
+function default_draw() {
     canvas.width = window.innerWidth
     canvas.height = window.innerHeight
+    c.scale(s, s)
+    draw_map(c, utils.vec(0, 0), data)
 }
 
-let default_draw = () => {
-    draw_map(c, 0, 0, window.innerWidth, window.innerHeight, s)
-    draw_units(c, 0, 0, window.innerWidth, window.innerHeight, s, game_data.units)
-}
-
-window.onresize = () => {
-    resize_canvas()
-    default_draw(16)
-}
-
-canvas.onclick = (e) => {
-    let cx = e.clientX
-    let cy = e.clientY
-    let gx = Math.floor(cx / s)
-    let gy = Math.floor(cy / s)
-    //console.log(gx, gy)
-}
-
-socket.on('update', (data) => {
-    game_data = data
-    default_draw()
-})
-
-resize_canvas()
-default_draw()
+window.onresize = () => default_draw()
