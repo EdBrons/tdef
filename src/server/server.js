@@ -24,7 +24,7 @@ server.listen(port, () => {
 const game = new Game()
 
 io.on('connection', (socket) => {
-    game.add_player(socket)
+    game.add_socket(socket)
 })
 
 let loop_interval = 1000 / 10

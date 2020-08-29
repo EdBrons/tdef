@@ -1,4 +1,6 @@
-import map from '../shared/map.js'
+import map from './map.js'
+import resources from './resources.js'
+import resource_names from './resource_names.js'
 
 export function random(max, min=0) {
     return Math.floor(Math.random() * (max - min) + min)
@@ -13,6 +15,14 @@ export function remove_from_arr(arr, el) {
 
 export function terrain_at(pos) {
     return map.terrain[pos.y][pos.x]
+}
+
+export function resource_at(pos) {
+	return resources.resources[pos.y][pos.x]
+}
+
+export function resource_name(i) {
+	return resource_names[i]
 }
 
 export function vec(x, y) {

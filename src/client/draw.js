@@ -38,7 +38,6 @@ export function draw_map(ctx, top, data) {
         for (let x = 0; x < map_data.width; x++) {
             let terrain = utils.terrain_at(utils.vec(x, y))
             let color = TERRAIN_COLORS[terrain]
-			let fid = data.ownership[x + y * map_data.width]
 			fill_tile(x, y, color)
         }
     }
