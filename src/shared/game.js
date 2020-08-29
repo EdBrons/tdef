@@ -1,5 +1,6 @@
 import * as utils from './utils.js'
 import map from '../shared/map.js'
+import fac_colors from './fac_colors.js'
 
 let city_locations = [
     [34, 32],
@@ -17,13 +18,18 @@ class City {
     constructor(fid, pos) {
         this.fid = fid
         this.pos = pos
-        this.wealth = 4
+		this.wealth = 0
+        this.industry = 4
+		this.tilewealth = 0
         this.trade_clock = 0
     }
+	add_tile(tile) {
+
+	}
 }
 
 const UNIT_TYPES = {
-    TRADER: 0
+		TRADER: 0
 }
 
 let def_check = () => false
@@ -58,8 +64,9 @@ class Unit {
 }
 
 class Player {
-    constructor(fid) {
+    constructor(fid, color) {
         this.fid = fid
+		this.color = color
     }
 }
 
@@ -72,20 +79,29 @@ export class Game {
         this.cities = []
         this.uidx = 0
         this.units = []
+		this.ownership = []
         this.unit_count = 0
         this.init()
     }
     init() {
+		for (let i = 0; i < map.width * map.height; i++) {
+			this.ownership[i] = -1
+		}
         city_locations.forEach(c_loc => {
             let x = c_loc[0]
             let y = c_loc[1]
             let fid = this.fidx++
-            let player = new Player(fid)
+            let player = new Player(fid, fac_colors.pop())
             let city = new City(fid, utils.vec(x, y))
             this.players[fid] = player
             this.cities.push(city)
+			this.set_owner(utils.vec(x, y), city)
         })
     }
+	set_owner(pos, city) {
+		this.ownership[pos.x + pos.y * map.width] = city.fid
+		city.add_tile(pos)
+	}
     add_player(socket) {
         this.sockets.push(socket)
     }
@@ -126,6 +142,7 @@ export class Game {
     update() {
         // city stuff
         this.cities.forEach(c => {
+			c.wealth += c.industry + c.tilewealth
             c.trade_clock--
             if (c.trade_clock <= 0) {
                 this.do_city_trade(c)
@@ -139,7 +156,7 @@ export class Game {
         this.units.filter(u => u.is_obj_reached()).forEach(u => {
             u.on_obj_reached()
         })
-        this.sockets.forEach(s => s.emit('update', {tick: this.tick, cities: this.cities, units: this.units, players: this.players}))
+        this.sockets.forEach(s => s.emit('update', {tick: this.tick, cities: this.cities, units: this.units, players: this.players, ownership: this.ownership}))
         this.tick++
     }
 }
