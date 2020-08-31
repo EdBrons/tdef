@@ -32,6 +32,29 @@ export function vec(x, y) {
     }
 }
 
+const adjs_arr = [
+	vec(1, 0),
+	vec(-1, 0),
+	vec(0, 1),
+	vec(0, -1),
+]
+
+export function adjs(v) {
+	let arr = []
+	for (let i = 0; i < adjs_arr.length; i++) {
+		arr.push(add(v, adjs_arr[i]))
+	}
+	return arr
+}
+
+export function in_bounds(v) {
+	return v && v.x >= 0 && v.y >= 0 && v.x < map.width && v.y < map.height
+}
+
+export function adj_map_tiles(v) {
+	return adjs(v).filter(v => in_bounds(v))
+}
+
 export function is_equal(pos1, pos2) {
     return pos1.x == pos2.x && pos1.y == pos2.y
 }

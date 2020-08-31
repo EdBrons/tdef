@@ -4,18 +4,53 @@ import map from '../shared/map.js'
 import resources from '../shared/resources.js'
 import fac_colors from './fac_colors.js'
 
-import { city_locations, trade_clock_time, unit_types } from './config.js'
+import { resource_count, city_locations, trade_clock_time, unit_types, no_owner, default_city_resources, city_needs } from './config.js'
 import { ActionMove } from './action.js'
 
 class City {
     constructor(fid, pos) {
         this.fid = fid
         this.pos = pos
-		this.wealth = 0
-        this.industry = 4
-		this.tilewealth = 0
-        this.trade_clock = 0
+		this.tiles = []
+
+		//this.resources = new Array(resource_count)
+		//this.resources.fill(0)
+		this.dir_res_income = default_city_resources
+		this.needs = city_needs
+		this.value = new Array(resource_count)
+		this.value.fill(1)
     }
+	update_resources() {
+		for (let i = 0; i < resource_count; i++) {
+			this.resources[i] += this.dir_res_income[i]
+		}
+	}
+	balance(i) {
+		return this.dir_res_income[i]
+	}
+	update_needs() {
+		let d = new Array(resource_count)
+		d.fill(0)
+		for (let i = 0; i < resource_count; i++) {
+			d[i] += Math.max( this.needs[i] - this.balance(i), 0 )
+		}
+		for (let i = 0; i < resource_count; i++) {
+			if (d[i] > 0) {
+				this.value[i]++
+			}
+			else if  (this.value[i] > 1) {
+				this.value[i]--
+			}
+		}
+	}
+	add_tile(v) {
+		this.tiles.push(v)
+		this.dir_res_income[utils.resource_at(v)]++
+	}
+	remove(v) {
+		this.tiles.splice(this.tiles.indexOf(v), 1)
+		this.dir_res_income[utils.resource_at(v)]--
+	}
 }
 
 class Unit {
@@ -46,6 +81,14 @@ export class Game {
         this.cities = []
         this.units = []
 
+		this.tile_fac = new Array(map.height)
+		for (let y = 0; y < map.height; y++) {
+			this.tile_fac[y] = new Array(map.width)
+			for (let x = 0; x < map.width; x++) {
+				this.tile_fac[y][x] = no_owner
+			}
+		}
+
 		this.actions = []
 
         this.init()
@@ -59,13 +102,24 @@ export class Game {
             let player = new Player(fid, fac_colors.pop())
             let city = new City(fid, utils.vec(x, y))
 			let u = this.make_unit(fid, city.pos, unit_types.TRADER)
+			this.set_faction_at(x, y, city)
 
-			this.start_move(u, utils.add(u.pos, utils.vec(10, 10)))
+			//this.start_move(u, utils.add(u.pos, utils.vec(10, 10)))
 
             this.players[fid] = player
             this.cities.push(city)
         })
     }
+	set_faction_at(x, y, city) {
+		this.tile_fac[y][x] = city.fid
+		city.add_tile(utils.vec(x, y))
+	}
+	flatten_tiles() {
+		return this.tiles.flat(1)
+	}
+	get_fid_tiles(fid) {
+		return 
+	}
     add_socket(socket) {
         this.sockets.push(socket)
     }
@@ -87,6 +141,12 @@ export class Game {
 		this.start_action(move)
 	}
     update() {
+		// update city economy
+		if (this.tick % 4 == 0) {
+			//this.cities.forEach(c => c.update_resources())
+			this.cities.forEach(c => c.update_needs())
+		}
+
 		// do actions
 		this.actions.forEach(m => m.act())
 		this.actions = this.actions.filter(a => !a.done)

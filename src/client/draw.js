@@ -51,4 +51,8 @@ export function draw_map(ctx, top, data) {
     data.units.forEach(u => {
 		draw_square(u.pos.x, u.pos.y, get_fac_color(u.fid), 2)
     })
+
+	if (data.tick % 10 == 0) {
+		//console.log(data)
+	}
 }
