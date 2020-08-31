@@ -1,6 +1,6 @@
 import map from './map.js'
 import resources from './resources.js'
-import resource_names from './resource_names.js'
+import { resource_names } from './config.js'
 
 export function random(max, min=0) {
     return Math.floor(Math.random() * (max - min) + min)

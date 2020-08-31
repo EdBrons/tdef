@@ -1,4 +1,16 @@
-import names from './resource_names.js'
+export const faction_colors =  [
+	"#b71c1c",
+	"#e1bee7",
+	"#42a5f5",
+	"#4a148c",
+	"#fff176",
+	"#d84315",
+	"#bdbdbd",
+]
+
+export const resource_names = [
+	"water", "wheat", "livestock", "fish", "wood", "stone", "wool", "iron", "coal", "precious_metals", "gems"
+]
 
 export const city_locations = [
     [34, 32],
@@ -26,4 +38,4 @@ export const city_needs = [
 	0, 2, 2, 2, 3, 3, 3, 3, 3, 1, 1
 ]
 
-export const resource_count = names.length
+export const resource_count = resource_names.length

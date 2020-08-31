@@ -1,10 +1,9 @@
 import * as utils from './utils.js'
-
+import * as config from './config.js'
 import map from '../shared/map.js'
 import resources from '../shared/resources.js'
-import fac_colors from './fac_colors.js'
 
-import { resource_count, city_locations, trade_clock_time, unit_types, no_owner, default_city_resources, city_needs } from './config.js'
+
 import { ActionMove } from './action.js'
 
 class City {
@@ -13,15 +12,15 @@ class City {
         this.pos = pos
 		this.tiles = []
 
-		//this.resources = new Array(resource_count)
+		//this.resources = new Array(config.resource_count)
 		//this.resources.fill(0)
-		this.dir_res_income = default_city_resources
-		this.needs = city_needs
-		this.value = new Array(resource_count)
+		this.dir_res_income = config.default_city_resources
+		this.needs = config.city_needs
+		this.value = new Array(config.resource_count)
 		this.value.fill(1)
     }
 	update_resources() {
-		for (let i = 0; i < resource_count; i++) {
+		for (let i = 0; i < config.resource_count; i++) {
 			this.resources[i] += this.dir_res_income[i]
 		}
 	}
@@ -29,12 +28,12 @@ class City {
 		return this.dir_res_income[i]
 	}
 	update_needs() {
-		let d = new Array(resource_count)
+		let d = new Array(config.resource_count)
 		d.fill(0)
-		for (let i = 0; i < resource_count; i++) {
+		for (let i = 0; i < config.resource_count; i++) {
 			d[i] += Math.max( this.needs[i] - this.balance(i), 0 )
 		}
-		for (let i = 0; i < resource_count; i++) {
+		for (let i = 0; i < config.resource_count; i++) {
 			if (d[i] > 0) {
 				this.value[i]++
 			}
@@ -85,7 +84,7 @@ export class Game {
 		for (let y = 0; y < map.height; y++) {
 			this.tile_fac[y] = new Array(map.width)
 			for (let x = 0; x < map.width; x++) {
-				this.tile_fac[y][x] = no_owner
+				this.tile_fac[y][x] = config.no_owner
 			}
 		}
 
@@ -94,14 +93,14 @@ export class Game {
         this.init()
     }
     init() {
-        city_locations.forEach(c_loc => {
+        config.city_locations.forEach(c_loc => {
             let x = c_loc[0]
             let y = c_loc[1]
             let fid = this.fidx++
 
-            let player = new Player(fid, fac_colors.pop())
+            let player = new Player(fid, config.faction_colors.pop())
             let city = new City(fid, utils.vec(x, y))
-			let u = this.make_unit(fid, city.pos, unit_types.TRADER)
+			let u = this.make_unit(fid, city.pos, config.unit_types.TRADER)
 			this.set_faction_at(x, y, city)
 
 			//this.start_move(u, utils.add(u.pos, utils.vec(10, 10)))
