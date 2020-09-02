@@ -1,3 +1,4 @@
+export const no_owner = -1
 export const faction_colors =  [
 	"#b71c1c",
 	"#e1bee7",
@@ -7,11 +8,6 @@ export const faction_colors =  [
 	"#d84315",
 	"#bdbdbd",
 ]
-
-export const resource_names = [
-	"water", "wheat", "livestock", "fish", "wood", "stone", "wool", "iron", "coal", "precious_metals", "gems"
-]
-
 export const city_locations = [
     [34, 32],
     [40, 30],
@@ -21,21 +17,16 @@ export const city_locations = [
     [34, 20],
     [39, 19],
 ]
-
-export const trade_clock_time = 25
-
 export const unit_types = {
 		TRADER: 0
 }
-
-export const no_owner = -1
-
-export const default_city_resources = [
+export const resource_names = [
+	"water", "wheat", "livestock", "fish", "wood", "stone", "wool", "iron", "coal", "precious_metals", "gems"
+]
+export const city_base_income = [
 	0, 2, 2, 0, 1, 1, 1, 1, 1, 0, 0
 ]
-
-export const city_needs = [
+export const city_base_needs = [
 	0, 2, 2, 2, 3, 3, 3, 3, 3, 1, 1
 ]
-
 export const resource_count = resource_names.length

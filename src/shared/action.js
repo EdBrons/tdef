@@ -1,6 +1,10 @@
 import * as utils from './utils.js'
+import * as config from './config.js'
 
 class Action {
+	constructor(p) {
+		this.p = p
+	}
 	act() {
 		this.update()
 		if (this.is_done()) {
@@ -15,7 +19,7 @@ class Action {
 
 export class ActionMove extends Action {
 	constructor(unit, destination) {
-		super()
+		super(5)
 		this.unit = unit
 		this.destination = destination
 	}
@@ -24,6 +28,9 @@ export class ActionMove extends Action {
 	}
 	finish() {
 		// do nothing
+	}
+	is_done() {
+		return utils.equals(this.destination, this.unit.pos)
 	}
 	move() {
         let delta = utils.sub(this.destination, this.unit.pos)

@@ -1,73 +1,13 @@
 import * as utils from './utils.js'
 import * as config from './config.js'
+
 import map from '../shared/map.js'
 import resources from '../shared/resources.js'
 
-
+import City from './city.js'
+import Unit from './unit.js'
+import Player from './player.js'
 import { ActionMove } from './action.js'
-
-class City {
-    constructor(fid, pos) {
-        this.fid = fid
-        this.pos = pos
-		this.tiles = []
-
-		//this.resources = new Array(config.resource_count)
-		//this.resources.fill(0)
-		this.dir_res_income = config.default_city_resources
-		this.needs = config.city_needs
-		this.value = new Array(config.resource_count)
-		this.value.fill(1)
-    }
-	update_resources() {
-		for (let i = 0; i < config.resource_count; i++) {
-			this.resources[i] += this.dir_res_income[i]
-		}
-	}
-	balance(i) {
-		return this.dir_res_income[i]
-	}
-	update_needs() {
-		let d = new Array(config.resource_count)
-		d.fill(0)
-		for (let i = 0; i < config.resource_count; i++) {
-			d[i] += Math.max( this.needs[i] - this.balance(i), 0 )
-		}
-		for (let i = 0; i < config.resource_count; i++) {
-			if (d[i] > 0) {
-				this.value[i]++
-			}
-			else if  (this.value[i] > 1) {
-				this.value[i]--
-			}
-		}
-	}
-	add_tile(v) {
-		this.tiles.push(v)
-		this.dir_res_income[utils.resource_at(v)]++
-	}
-	remove(v) {
-		this.tiles.splice(this.tiles.indexOf(v), 1)
-		this.dir_res_income[utils.resource_at(v)]--
-	}
-}
-
-class Unit {
-    constructor(id, fid, pos, type) {
-        this.id = id
-        this.fid = fid
-        this.pos = pos
-        this.type = type
-		this.speed = map.tile_size / 300
-    }
-}
-
-class Player {
-    constructor(fid, color) {
-        this.fid = fid
-		this.color = color
-    }
-}
 
 export class Game {
     constructor() {
@@ -109,6 +49,9 @@ export class Game {
             this.cities.push(city)
         })
     }
+    add_socket(socket) {
+        this.sockets.push(socket)
+    }
 	set_faction_at(x, y, city) {
 		this.tile_fac[y][x] = city.fid
 		city.add_tile(utils.vec(x, y))
@@ -116,12 +59,6 @@ export class Game {
 	flatten_tiles() {
 		return this.tiles.flat(1)
 	}
-	get_fid_tiles(fid) {
-		return 
-	}
-    add_socket(socket) {
-        this.sockets.push(socket)
-    }
     make_unit(fid, pos, t) {
         let new_unit = new Unit(this.uidx++, fid, pos, t)
         this.units.push(new_unit)
@@ -140,13 +77,8 @@ export class Game {
 		this.start_action(move)
 	}
     update() {
-		// update city economy
-		if (this.tick % 4 == 0) {
-			//this.cities.forEach(c => c.update_resources())
-			this.cities.forEach(c => c.update_needs())
-		}
-
 		// do actions
+		this.actions.sort((a, b) => a.p - b.p)
 		this.actions.forEach(m => m.act())
 		this.actions = this.actions.filter(a => !a.done)
 
@@ -158,6 +90,7 @@ export class Game {
 			players: this.players, 
 			ownership: this.ownership
 		}))
+
         this.tick++
     }
 }

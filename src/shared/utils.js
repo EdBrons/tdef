@@ -1,6 +1,6 @@
 import map from './map.js'
 import resources from './resources.js'
-import { resource_names } from './config.js'
+import { resource_names, resource_count } from './config.js'
 
 export function random(max, min=0) {
     return Math.floor(Math.random() * (max - min) + min)
@@ -16,6 +16,8 @@ export function remove_from_arr(arr, el) {
 export function terrain_at(pos) {
     return map.terrain[pos.y][pos.x]
 }
+
+export const item_arr = (x=0) => (new Array(resource_count)).fill(x)
 
 export function resource_at(pos) {
 	return resources.resources[pos.y][pos.x]
