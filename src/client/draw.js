@@ -1,6 +1,5 @@
 import map_data from '../shared/map.js'
-import { TERRAIN_COLORS } from './colors.js'
-import * as utils from '../shared/utils'
+import { TERRAIN_COLORS } from './config.js'
 
 let ts = map_data.tile_size
 
@@ -41,18 +40,4 @@ export function draw_map(ctx, top, data) {
 			fill_tile(x, y, color)
         }
     }
-
-    // draw cities
-    data.cities.forEach(c => {
-		draw_square(c.pos.x, c.pos.y, get_fac_color(c.fid), 4)
-    })
-
-    // draw units
-    data.units.forEach(u => {
-		draw_square(u.pos.x, u.pos.y, get_fac_color(u.fid), 2)
-    })
-
-	if (data.tick % 10 == 0) {
-		//console.log(data)
-	}
 }
