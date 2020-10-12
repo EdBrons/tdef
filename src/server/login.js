@@ -13,15 +13,16 @@ export class Login {
 		})
 	}
 	is_valid_login(username, password) {
-		for (u in users) {
-			if (u.name == username && u.password == password) {
+        for (let i = 0; i < users.length; i++) {
+            let u = users[i]
+			if (u.name === username && u.password === password) {
 				return true
 			}
 		}
 		return false
 	}
 	try_login(socket, data) {
-		if (this.is_valid_login(data.name, data.password)) {
+		if (this.is_valid_login(data.username, data.password)) {
 			this.game.add_player(data.name, socket)
 			socket.emit('login', {
 				success: true
