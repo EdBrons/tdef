@@ -24,7 +24,12 @@ function default_draw() {
 canvas.onclick = (e) => {
 	let x = e.clientX
 	let y = e.clientY
-	let v = utils.add(utils.floor(utils.div(utils.vec(x, y), map.tile_size * s)), camera_pos)
+    let v = utils.add(utils.floor(utils.div(utils.vec(x, y), map.tile_size * s)), camera_pos)
+    data.cities.forEach(c => {
+        if (utils.is_equal(c.pos, v)) {
+            console.log(c)
+        }
+    })
 	//console.log(utils.resource_name(utils.resource_at(v)))
 }
 

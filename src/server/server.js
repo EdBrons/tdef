@@ -2,7 +2,7 @@ import express from 'express'
 import http from 'http'
 import path from 'path'
 import IO from 'socket.io'
-import { port } from './config.js'
+// import { port } from './config.js'
 
 const app = express()
 const server = http.createServer(app)
@@ -17,8 +17,8 @@ app.get('/', (req, res) => {
 
 import { Game } from '../shared/game.js'
 
-server.listen(port, () => {
-    console.log(`Server running on port ${port}`)
+server.listen(2000, () => {
+    console.log("Server running")
 })
 
 const game = new Game()

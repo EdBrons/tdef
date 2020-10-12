@@ -7,7 +7,7 @@ import resources from '../shared/resources.js'
 import City from './city.js'
 import Unit from './unit.js'
 import Player from './player.js'
-import { ActionMove } from './action.js'
+import { ActionMove, CityEconAction } from './action.js'
 
 export class Game {
     constructor() {
@@ -39,11 +39,13 @@ export class Game {
             let fid = this.fidx++
 
             let player = new Player(fid, config.faction_colors.pop())
-            let city = new City(fid, utils.vec(x, y))
-			let u = this.make_unit(fid, city.pos, config.unit_types.TRADER)
+            let city = new City(this, fid, utils.vec(x, y))
+			//let u = this.make_unit(fid, city.pos, config.unit_types.TRADER)
 			this.set_faction_at(x, y, city)
 
 			//this.start_move(u, utils.add(u.pos, utils.vec(10, 10)))
+			// let a = new CityEconAction(city)
+			// this.start_action(a)
 
             this.players[fid] = player
             this.cities.push(city)
@@ -77,6 +79,10 @@ export class Game {
 		this.start_action(move)
 	}
     update() {
+        if (this.tick % 100 == 0) {
+            // this.cities.forEach(c => c.update())
+        }
+        
 		// do actions
 		this.actions.sort((a, b) => a.p - b.p)
 		this.actions.forEach(m => m.act())
@@ -88,7 +94,6 @@ export class Game {
 			cities: this.cities, 
 			units: this.units, 
 			players: this.players, 
-			ownership: this.ownership
 		}))
 
         this.tick++

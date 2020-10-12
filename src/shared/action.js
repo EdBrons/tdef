@@ -44,3 +44,21 @@ export class ActionMove extends Action {
         this.unit.pos = utils.add(delta, this.unit.pos)
 	}
 }
+
+export class CityEconAction extends Action {
+	constructor(c) {
+		super(1)
+		this.c = c
+	}
+	update() {
+		this.c.values.forEach(v => {
+		})
+	}
+	finish() {
+		// nothing
+	}
+	is_done() {
+		// eternal
+		return false
+	}
+}
