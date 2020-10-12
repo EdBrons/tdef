@@ -15,16 +15,18 @@ app.get('/', (req, res) => {
     res.sendFile(__dirname + '/dist/index.html')
 })
 
-import { Game } from '../shared/game.js'
-
 server.listen(2000, () => {
-    console.log("Server running")
+    console.log("Server running on port 2000")
 })
 
+import { Game } from '../shared/game.js'
+import { Login } from './login.js'
+
 const game = new Game()
+const login = new Login(game)
 
 io.on('connection', (socket) => {
-    game.add_socket(socket)
+    login.on_connection(socket)
 })
 
 let loop_interval = 1000 / 10

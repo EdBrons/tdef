@@ -18,7 +18,7 @@ export const city_locations = [
     [39, 19],
 ]
 export const unit_types = {
-		TRADER: 0
+	TRADER: 0
 }
 export const resource_names = [
 	"water", "wheat", "livestock", "fish", "wood", "stone", "wool", "iron", "coal", "precious_metals", "gems"
