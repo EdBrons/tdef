@@ -29,7 +29,7 @@ io.on('connection', (socket) => {
     login.on_connection(socket)
 })
 
-let loop_interval = 1000 / 10
+let loop_interval = 1000 / 1
 
 let loop_helper = () => {
     game.update()

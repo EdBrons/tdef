@@ -6,8 +6,10 @@ export class Login {
 		this.game = g
 	}
 	on_connection(socket) {
+        console.log("socket_" + socket.id + " connected")
 		socket.on('login', (data) => this.try_login(socket, data))
 		socket.on('disconnection', () => {
+            console.log("socket_" + socket.id + " disconnected")
 			game.socket_disconnect(socket)
 			delete this.sockets[socket.id]
 		})
@@ -23,12 +25,14 @@ export class Login {
 	}
 	try_login(socket, data) {
 		if (this.is_valid_login(data.username, data.password)) {
+            console.log("socket_" + socket.id + " successfully logged in")
 			this.game.add_player(data.name, socket)
 			socket.emit('login', {
 				success: true
 			})
 		}
 		else {
+            console.log("socket_" + socket.id + " unsuccessfully logged in")
 			socket.emit('login', {
 				success: false
 			})
