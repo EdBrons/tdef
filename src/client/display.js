@@ -7,7 +7,8 @@ export class Display {
                 this.map_image = new Image()
                 this.map_image.src = "map.png"
 
-                this.scale = 15
+				this.camera = { x: 0, y: 0 }
+                this.scale = 20
 
                 window.onresize = () => {
                         this.draw_map()
@@ -18,7 +19,19 @@ export class Display {
                 canvas.style.height = this.map_image.height * this.scale + "px"
         }
         draw_map() {
-                this.fit_canvas()
-                this.c.drawImage(this.map_image, 0, 0)
+				this.fit_canvas()
+				this.c.drawImage(this.map_image, -this.camera.x, -this.camera.y)
         }
+		move_camera(dx, dy) {
+				this.camera.x += dx
+				this.camera.y += dy
+				this.bound_camera()
+				this.draw_map()
+		}
+		bound_camera() {
+				this.camera.x = Math.max(this.camera.x, 0)
+				this.camera.y = Math.max(this.camera.y, 0)
+				this.camera.x = Math.min(this.camera.x, this.map_image.width - window.innerWidth / this.scale)
+				this.camera.y = Math.min(this.camera.y, this.map_image.height - window.innerHeight / this.scale)
+		}
 }
