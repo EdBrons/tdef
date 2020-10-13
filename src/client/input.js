@@ -28,15 +28,15 @@ export class Input {
 		// mouse
 		onmousedown(e) {
 				this.movedown = true
-				// this.mousedown_pos = this.display.client_to_global({x: e.clientX, y: e.clientY})
+				this.mousedown_pos = this.display.client_to_global({x: e.clientX, y: e.clientY})
+				console.log(this.mousedown_pos)
 		}
 		onmouseup(e) {
 				this.movedown = false
-				// this.mouseup_pos = this.display.client_to_global({x: e.clientX, y: e.clientY})
+				this.mouseup_pos = this.display.client_to_global({x: e.clientX, y: e.clientY})
 		}
 		onmousemove(e) {
-				// this.mouse_pos = this.display.client_to_global({x: e.clientX, y: e.clientY})
-				console.log(e.clientX, e.clientY)
+				this.mouse_pos = this.display.client_to_global({x: e.clientX, y: e.clientY})
 		}
 		update_helper() {
 				this.update()
@@ -73,6 +73,6 @@ export class Input {
 				else if (this.keydown[90]) {
 						ds++
 				}
-				this.display.add_scale(ds)
+				// this.display.add_scale(ds)
 		}
 }

@@ -1,16 +1,14 @@
 export class Display {
         constructor() {
                 this.div = document.getElementById("game")
-                this.canvas = document.getElementById("canvas")
-                this.c = canvas.getContext('2d')
-                this.c.imageSmoothingEnabled = false;
+                this.map_canvas = document.getElementById("map-canvas")
+				this.map_c = this.map_canvas.getContext('2d')
+
                 this.map_image = new Image()
                 this.map_image.src = "map.png"
 
 				this.camera = { x: 0, y: 0 }
-                this.scale = 1
-				this.min_scale = Math.floor(window.innerHeight / this.map_image.height) + 5
-				this.max_scale = 100
+                this.map_scale = 20
 
                 window.onresize = () => {
                         this.draw_map()
@@ -19,37 +17,27 @@ export class Display {
 		// coords
 		client_to_global(pos) {
 				return {
-						x: this.camera.x + Math.floor(pos.x / this.scale),
-						y: this.camera.y + Math.floor(pos.y / this.scale)
+						x: this.camera.x + Math.floor(pos.x / this.map_scale),
+						y: this.camera.y + Math.floor(pos.y / this.map_scale)
 				}
 		}
 		global_to_client(pos) {
 				return {
-						x: (pos.x - this.camera.x) * this.scale,
-						y: (pos.y - this.camera.y) * this.scale
+						x: (this.pos.x - this.camera.x) * this.map_scale,
+						x: (this.pos.y - this.camera.y) * this.map_scale
 				}
 		}
 		// drawing
         fit_canvas() {
-                canvas.style.width = this.map_image.width * this.scale + "px"
-                canvas.style.height = this.map_image.height * this.scale * window.deviceRatio + "px"
-				this.min_scale = Math.floor(window.innerHeight / this.map_image.height) + 5
-				this.max_scale = 100
+				this.map_canvas.width = this.map_image.width
+				this.map_canvas.height = this.map_image.height
+				this.map_canvas.style.width = this.map_image.width * this.map_scale + "px"
+				this.map_canvas.style.height = this.map_image.height * this.map_scale + "px"
         }
         draw_map() {
 				this.fit_canvas()
-				this.c.drawImage(this.map_image, -this.camera.x, -this.camera.y)
+				this.map_c.drawImage(this.map_image, -this.camera.x, -this.camera.y)
         }
-		// scale
-		add_scale(ds) {
-				this.scale += ds
-				this.bound_scale()
-				this.draw_map()
-		}
-		bound_scale() {
-				this.scale = Math.max(this.scale, this.min_scale)
-				this.scale = Math.min(this.scale, this.max_scale)
-		}
 		// camera
 		move_camera(dx, dy) {
 				this.camera.x += dx
@@ -60,7 +48,7 @@ export class Display {
 		bound_camera() {
 				this.camera.x = Math.max(this.camera.x, 0)
 				this.camera.y = Math.max(this.camera.y, 0)
-				this.camera.x = Math.min(this.camera.x, this.map_image.width - window.innerWidth / this.scale)
-				this.camera.y = Math.min(this.camera.y, this.map_image.height - window.innerHeight / this.scale)
+				this.camera.x = Math.min(this.camera.x, this.map_image.width - Math.floor(window.innerWidth / this.map_scale))
+				this.camera.y = Math.min(this.camera.y, this.map_image.height - Math.floor(window.innerHeight / this.map_scale))
 		}
 }
