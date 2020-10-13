@@ -8,7 +8,7 @@ export class Display {
                 this.map_image.src = "map.png"
 
 				this.camera = { x: 0, y: 0 }
-                this.scale = 25
+                this.scale = 1
 				this.min_scale = Math.floor(window.innerHeight / this.map_image.height) + 5
 				this.max_scale = 100
 
@@ -16,9 +16,23 @@ export class Display {
                         this.draw_map()
                 }
         }
+		// coords
+		client_to_global(pos) {
+				return {
+						x: this.camera.x + Math.floor(pos.x / this.scale),
+						y: this.camera.y + Math.floor(pos.y / this.scale)
+				}
+		}
+		global_to_client(pos) {
+				return {
+						x: (pos.x - this.camera.x) * this.scale,
+						y: (pos.y - this.camera.y) * this.scale
+				}
+		}
+		// drawing
         fit_canvas() {
                 canvas.style.width = this.map_image.width * this.scale + "px"
-                canvas.style.height = this.map_image.height * this.scale + "px"
+                canvas.style.height = this.map_image.height * this.scale * window.deviceRatio + "px"
 				this.min_scale = Math.floor(window.innerHeight / this.map_image.height) + 5
 				this.max_scale = 100
         }
@@ -26,6 +40,7 @@ export class Display {
 				this.fit_canvas()
 				this.c.drawImage(this.map_image, -this.camera.x, -this.camera.y)
         }
+		// scale
 		add_scale(ds) {
 				this.scale += ds
 				this.bound_scale()
@@ -35,6 +50,7 @@ export class Display {
 				this.scale = Math.max(this.scale, this.min_scale)
 				this.scale = Math.min(this.scale, this.max_scale)
 		}
+		// camera
 		move_camera(dx, dy) {
 				this.camera.x += dx
 				this.camera.y += dy
