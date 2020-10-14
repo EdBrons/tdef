@@ -12,21 +12,24 @@ class User {
 }
 
 class Tile {
-	constructor(x, y) {
+	constructor(x, y, t) {
 		this.x = x
 		this.y = y
+		this.terrain = t
+		this.unit = null
 	}
 }
 
-class Map {
+export class Map {
 		constructor(w, h) {
 				this.w = w
 				this.h = h
-				this.tiles = new Array(w)
+				this.tiles = new Array(h)
+				this.units = []
 				for (let y = 0; y < h; y++) {
-						this.tiles[y] = new Array(h)
+						this.tiles[y] = new Array(w)
 						for (let x = 0; x < w; x++) {
-								this.tiles[y][x] = new Tile(x, y)
+								this.tiles[y][x] = new Tile(x, y, map.terrain[y][x])
 						}
 				}
 		}
