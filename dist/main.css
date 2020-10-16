@@ -1,15 +1,16 @@
 body {
-    overflow: hidden;
+		overflow: hidden;
 }
 
-#map-canvas {
-    position: absolute;
-    left: 0;
-    top: 0;
-	width: 200px;
-	height: 130px;
-	image-rendering: -moz-crisp-edges;
-	image-rendering: -webkit-crisp-edges;
-	image-rendering: pixelated;
-	image-rendering: crisp-edges;
+* {
+		padding: 0;
+		margin: 0;
+}
+
+canvas {
+		z-index: 0;
+}
+
+div {
+		z-index: 1;
 }

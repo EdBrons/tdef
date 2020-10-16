@@ -9,15 +9,17 @@ export class Login {
                 this.onsuccess = onsuccess
 
                 // html elements
-                this.logindiv = document.getElementById("login-div")
-                this.username = document.getElementById("login-username")
-                this.password = document.getElementById("login-password")
-                this.button = document.getElementById("login-button")
+				if (!auto_login) {
+						this.logindiv = document.getElementById("login-div")
+						this.username = document.getElementById("login-username")
+						this.password = document.getElementById("login-password")
+						this.button = document.getElementById("login-button")
+						this.button.onclick = () => this.try_login(
+							this.username.value,
+							this.password.value
+						)
+				}
 
-                this.button.onclick = () => this.try_login(
-                    this.username.value,
-                    this.password.value
-                )
                 if (auto_login) this.try_login()
         }
         try_login(username=default_username, password=default_password) {
@@ -29,7 +31,9 @@ export class Login {
             this.socket.on("login", (data) => {
                     if (data.success) {
                             console.log("login success")
-                            this.logindiv.hidden = true
+                            if (!auto_login) { 
+									this.logindiv.hidden = true 
+							}
                             this.onsuccess()
                     }
                     else {
