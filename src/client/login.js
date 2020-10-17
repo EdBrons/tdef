@@ -23,21 +23,21 @@ export class Login {
                 if (auto_login) this.try_login()
         }
         try_login(username=default_username, password=default_password) {
-            console.log("trying login")
+            console.log("Trying to login...")
             this.socket.emit("login", {
                     username: username,
                     password: password
             })
             this.socket.on("login", (data) => {
                     if (data.success) {
-                            console.log("login success")
+                            console.log("Login successful!")
                             if (!auto_login) { 
 									this.logindiv.hidden = true 
 							}
                             this.onsuccess()
                     }
                     else {
-                            console.log("login failed")
+                            console.log("Login failed...")
                     }
             })
         }

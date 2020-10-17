@@ -12,13 +12,15 @@ class Background extends PIXI.Sprite {
 class Camera extends PIXI.Container {
 		constructor() {
 				super()
-				this.zoom = 10
-				this.scale.set(this.zoom)
+				this.scale.set(10)
 		}
-		move_by(x, y) {
-				this.x -= x
-				this.y -= y
+		move_by(dx, dy) {
+				this.x -= dx
+				this.y -= dy
 				this.bound()
+		}
+		scale_by(ds) {
+				this.scale.set(this.scale.x + ds, this.scale.y + ds)
 		}
 		bound() {
 				this.x = Math.min(this.x, 0)
@@ -69,19 +71,30 @@ class KeyboardInput {
 				this._loop_helper()
 		}
 		add_cb(k, f) {
-				if (!this.cbs[k]) {
-						this.cbs[k] = []
+				if (!this.cbs[k]) { 
+						this.cbs[k] = [] 
+				}
+				if (!Array.isArray(k)) { 
+						k = [k] 
 				}
 				this.cbs[k].push(f)
+		}
+		is_active(keys) {
+				for (const k of keys) {
+						if (!(k in this.keys_down)) return false
+						if (!this.keys_down[k]) return false
+				}
+				return true
 		}
 		_loop_helper() {
 				this._loop()
 				setTimeout(() => this._loop_helper(), this.delay)
 		}
 		_loop() {
-				for (const key in this.keys_down) {
-						if (this.keys_down[key] && this.cbs[key] != undefined) {
-								for (const f of this.cbs[key]) f()
+				for (const keys_str in this.cbs) {
+						const keys = keys_str.split(",")
+						if (this.cbs[keys] != undefined && this.is_active(keys)) {
+								for (const f of this.cbs[keys]) f()
 						}
 				}
 		}
