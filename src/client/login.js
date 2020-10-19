@@ -1,7 +1,7 @@
-// for debug
-const default_username = ""
-const default_password = ""
-const auto_login = true
+import { users } from '../server/config.js'
+
+const debug = true
+const default_user = users[0]
 
 export class Login {
         constructor(socket, onsuccess) {
@@ -9,7 +9,7 @@ export class Login {
                 this.onsuccess = onsuccess
 
                 // html elements
-				if (!auto_login) {
+				if (!debug) {
 						this.logindiv = document.getElementById("login-div")
 						this.username = document.getElementById("login-username")
 						this.password = document.getElementById("login-password")
@@ -20,9 +20,9 @@ export class Login {
 						)
 				}
 
-                if (auto_login) this.try_login()
+                if (debug) this.try_login()
         }
-        try_login(username=default_username, password=default_password) {
+        try_login(username=default_user.name, password=default_user.password) {
             console.log("Trying to login...")
             this.socket.emit("login", {
                     username: username,
@@ -31,7 +31,7 @@ export class Login {
             this.socket.on("login", (data) => {
                     if (data.success) {
                             console.log("Login successful!")
-                            if (!auto_login) { 
+                            if (!debug) { 
 									this.logindiv.hidden = true 
 							}
                             this.onsuccess()

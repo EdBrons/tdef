@@ -5,9 +5,10 @@ import mapdata from './mapdata.js'
 import { Point } from './point.js'
 
 class User {
-	constructor(name, socket) {
-		this.name = name
-		this.socket = socket
+	constructor(n, s, fid) {
+		this.name = n
+		this.socket = s
+		this.fac = fid
 	}
 }
 
@@ -55,11 +56,11 @@ export class Map {
 								this.tiles[y][x] = new Tile(x, y, mapdata.terrain[y][x], 2)
 						}
 				}
-				for (let i = 0; i < mapdata.faction_locs.length; i++) make_faction(i)
+				for (let i = 0; i < mapdata.faction_locs.length; i++) this.make_faction(i)
 		}
 		make_faction(id) {
 				let f = new Faction(id)
-				let pos = faction_locs[id]
+				let pos = mapdata.faction_locs[id]
 				this.get_tile(pos).set_fac(id)
 				this.factions[id] = f
 		}
@@ -76,10 +77,11 @@ export class Game {
 			this.tick = 0
 			this.users = []
 			this.map = new Map(mapdata.width, mapdata.height)
+			this.available_facs = Object.keys(this.map.factions)
 	}
     add_player(name, socket) {
-            console.log("New user added.")
-            let user = new User(name, socket)
+            let user = new User(name, socket, this.available_facs.pop())
+            console.log(`New user '${name}' has joined. Their faction is ${user.fid}.`)
             this.users.push(user)
     }
     update() {

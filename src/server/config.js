@@ -6,8 +6,8 @@ export const dev = process.env.NODE_ENV !== "production"
 // temporary
 export const users = [
 	{
-		name: "",
-		password: "",
+		name: "admin",
+		password: "password",
 		admin: true
 	}
 ]

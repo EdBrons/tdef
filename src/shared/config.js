@@ -24,3 +24,7 @@ Unit.Attack = [
 	[3, 2, -1],
 	[-1, -1, 2]
 ]
+
+export const Building = {}
+
+Building.Types = { Farm: 0, Mine: 1, LumberMill: 2 }
