@@ -35,11 +35,14 @@ class Tile {
 		this.tax = 2
 		this.buildings = {}
 
-		this.fac = null
-		this.unit = null
+		this.fid = null
+		this.uid = null
 	}
-	set_fac(fid) {
-			this.fac = fid
+	set_fac(f) {
+			this.fid = f
+	}
+	set_unit(u) {
+			this.uid = u
 	}
 }
 
@@ -50,6 +53,7 @@ export class Map {
 				this.factions = {}
 				this.tiles = new Array(h)
 				this.units = []
+				this.uidx = 0
 				for (let y = 0; y < h; y++) {
 						this.tiles[y] = new Array(w)
 						for (let x = 0; x < w; x++) {
@@ -58,17 +62,44 @@ export class Map {
 				}
 				for (let i = 0; i < mapdata.faction_locs.length; i++) this.make_faction(i)
 		}
+		// factions
 		make_faction(id) {
 				let f = new Faction(id)
 				let pos = mapdata.faction_locs[id]
 				this.get_tile(pos).set_fac(id)
 				this.factions[id] = f
+				this.make_unit(f.id, pos)
 		}
+		// units
+		make_unit(f, p) {
+				let u = new Unit(f, this.uidx++, p)
+				this.set_unit_pos(u, p)
+		}
+		set_unit_pos(u, p) {
+				try {
+						if (!this.can_place_unit_at(u, p)) throw 'InvalidUnitLocation'
+						this.get_tile(p).set_unit(u.id)
+						console.log(`Placed unit_${u.id} at (${p.x}, ${p.y}).`)
+				}
+				catch (e) {
+						console.log(`Failed to place unit_${u.id} at (${p.x}, ${p.y}).`)
+				}
+		}
+		can_place_unit_at(u, p) {
+				return true
+		}
+		// tiles
 		in_bounds(p) {
 				return p.x >= 0 && p.y >= 0 && p.x < this.w && p.y < this.h
 		}
 		get_tile(p) {
 				return this.in_bounds(p) ? this.tiles[p.y][p.x] : null
+		}
+		get_all_tiles() {
+				return this.tiles.flat()
+		}
+		get_fac_tiles(f) {
+				return this.get_all_tiles().filter(t => t.fac == f)
 		}
 }
 
@@ -81,7 +112,7 @@ export class Game {
 	}
     add_player(name, socket) {
             let user = new User(name, socket, this.available_facs.pop())
-            console.log(`New user '${name}' has joined. Their faction is ${user.fid}.`)
+            console.log(`New user '${name}' has joined. Their faction is ${user.fac}.`)
             this.users.push(user)
     }
     update() {
