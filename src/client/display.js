@@ -6,6 +6,18 @@ const TEXTURES = PIXI.utils.TextureCache
 class Background extends PIXI.Sprite {
 		constructor() {
 				super(TEXTURES['map.png'])
+				this.interactive = true
+				this.on('click', (e) => {
+						let local_pos = e.data.getLocalPosition(this)
+						let global_pos = e.data.global
+						console.log(this.to_game_pos(local_pos))
+				})
+		}
+		to_game_pos(pos) {
+				return {
+						x: Math.floor(pos.x),
+						y: Math.floor(pos.y)
+				}
 		}
 }
 

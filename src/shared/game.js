@@ -1,7 +1,7 @@
 import * as utils from './utils.js'
 import * as config from './config.js'
 
-import mapdata from '../../dist/mapdata.js'
+import mapdata from './mapdata.js'
 import { Point } from './point.js'
 
 class User {
@@ -33,7 +33,12 @@ class Tile {
 		this.terrain = t
 		this.tax = 2
 		this.buildings = {}
+
+		this.fac = null
 		this.unit = null
+	}
+	set_fac(fid) {
+			this.fac = fid
 	}
 }
 
@@ -50,6 +55,13 @@ export class Map {
 								this.tiles[y][x] = new Tile(x, y, mapdata.terrain[y][x], 2)
 						}
 				}
+				for (let i = 0; i < mapdata.faction_locs.length; i++) make_faction(i)
+		}
+		make_faction(id) {
+				let f = new Faction(id)
+				let pos = faction_locs[id]
+				this.get_tile(pos).set_fac(id)
+				this.factions[id] = f
 		}
 		in_bounds(p) {
 				return p.x >= 0 && p.y >= 0 && p.x < this.w && p.y < this.h
