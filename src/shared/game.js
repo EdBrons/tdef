@@ -1,7 +1,7 @@
 import * as utils from './utils.js'
 import * as config from './config.js'
 
-import map from '../shared/map.js'
+import mapdata from '../../dist/mapdata.js'
 import { Point } from './point.js'
 
 class User {
@@ -11,11 +11,28 @@ class User {
 	}
 }
 
+class Faction {
+		constructor(id) {
+				this.id = id
+		}
+}
+
+class Unit {
+		constructor(id, f, p) {
+				this.id = id
+				this.fac = f
+				this.pos = p
+				this.unit_types = {}
+		}
+}
+
 class Tile {
 	constructor(x, y, t) {
 		this.x = x
 		this.y = y
 		this.terrain = t
+		this.tax = 2
+		this.buildings = {}
 		this.unit = null
 	}
 }
@@ -24,12 +41,13 @@ export class Map {
 		constructor(w, h) {
 				this.w = w
 				this.h = h
+				this.factions = {}
 				this.tiles = new Array(h)
 				this.units = []
 				for (let y = 0; y < h; y++) {
 						this.tiles[y] = new Array(w)
 						for (let x = 0; x < w; x++) {
-								this.tiles[y][x] = new Tile(x, y, map.terrain[y][x])
+								this.tiles[y][x] = new Tile(x, y, mapdata.terrain[y][x], 2)
 						}
 				}
 		}
@@ -45,7 +63,7 @@ export class Game {
 	constructor() {
 			this.tick = 0
 			this.users = []
-			this.map = new Map(map.width, map.height)
+			this.map = new Map(mapdata.width, mapdata.height)
 	}
     add_player(name, socket) {
             console.log("New user added.")
