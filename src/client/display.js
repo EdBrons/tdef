@@ -12,7 +12,7 @@ class Background extends PIXI.Sprite {
 class Camera extends PIXI.Container {
 		constructor() {
 				super()
-				this.scale.set(10)
+				this.scale.set(15)
 		}
 		move_by(dx, dy) {
 				this.x -= dx
@@ -34,7 +34,6 @@ export class Display {
 		constructor() {
 				PIXI.settings.SCALE_MODE = PIXI.SCALE_MODES.NEAREST
 				this.app = new PIXI.Application()
-				this.keys = new KeyboardInput()
 				document.body.appendChild(this.app.view)
 				LOADER.add('map.png').load(() => this.on_load())
 		}
@@ -45,12 +44,20 @@ export class Display {
 				this.background = new Background()
 				this.camera.addChild(this.background)
 				this.app.stage.addChild(this.camera)
-
+				this.init_keyboard()
+		}
+		init_keyboard() {
+				this.keys = new KeyboardInput()
+				const move_speed = 6
+				const scale_speed = .1
 				// keyboard movement
-				this.keys.add_cb(38, () => this.camera.move_by(0, -1))
-				this.keys.add_cb(37, () => this.camera.move_by(-1, 0))
-				this.keys.add_cb(40, () => this.camera.move_by(0, 1))
-				this.keys.add_cb(39, () => this.camera.move_by(1, 0))
+				this.keys.add_cb(38, () => this.camera.move_by(0, -move_speed))
+				this.keys.add_cb(37, () => this.camera.move_by(-move_speed, 0))
+				this.keys.add_cb(40, () => this.camera.move_by(0, move_speed))
+				this.keys.add_cb(39, () => this.camera.move_by(move_speed, 0))
+				// scale
+				this.keys.add_cb(90, () => this.camera.scale_by(scale_speed))
+				this.keys.add_cb(88, () => this.camera.scale_by(-scale_speed))
 		}
 		on_resize() {
 				this.resize()
@@ -60,6 +67,8 @@ export class Display {
 		}
 }
 
+// TODO: make combos blocking
+// example: [shift + w] should not trigger a [w] event
 class KeyboardInput {
 		constructor() {
 				this.keys_down = {}
