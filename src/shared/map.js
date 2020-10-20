@@ -70,7 +70,7 @@ export class Map {
 		get_fac_tiles(f) { return this.get_tiles().filter(t => t.fac == f) }
 }
 
-class Tile {
+export class Tile {
 	constructor(x, y) {
 		this.x = x
 		this.y = y
@@ -83,13 +83,13 @@ class Tile {
 	}
 }
 
-class Faction {
+export class Faction {
 		constructor(id) {
 				this.id = id
 		}
 }
 
-class Unit {
+export class Unit {
 		constructor(id, fac, pos) {
 				this.id = id
 				this.fac = fac

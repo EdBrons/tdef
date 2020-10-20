@@ -1,15 +1,17 @@
 import * as PIXI from 'pixi.js'
+import { Unit } from '../shared/map.js'
 
 const LOADER = PIXI.Loader.shared
 const TEXTURES = PIXI.utils.TextureCache
 
 class Unit extends PIXI.Sprite {
-		constructor() {
+		constructor(id, fac, pos) {
 				super(TEXTURES['boat.png'])
+				this.data = new Unit(id, fac, pos)
 				this.interactive = true
 				this.scale.set(1/4)
-				this.x = 19
-				this.y = 23
+				this.x = data.pos.x
+				this.y = data.pos.y
 		}
 }
 
@@ -73,8 +75,8 @@ export class Display {
 		move_unit(uid, dest) {
 				console.log(`Trying to move ${uid} to ${dest.x}, ${dest.y}`)
 		}
-		make_unit() {
-				let unit = new Unit()
+		make_unit(uid, pos) {
+				let unit = new Unit(uid, pos)
 				this.camera.addChild(unit)
 				unit.on('click', (e) => {
 						this.move_unit(0, {x: 0, y: 0})
