@@ -26,10 +26,10 @@ export class Login {
 	try_login(socket, data) {
 		if (this.is_valid_login(data.username, data.password)) {
             console.log("socket_" + socket.id + " successfully logged in")
-			this.game.add_player(data.username, socket)
 			socket.emit('login', {
 				success: true
 			})
+			this.game.add_player(data.username, socket)
 		}
 		else {
             console.log("socket_" + socket.id + " unsuccessfully logged in")

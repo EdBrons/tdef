@@ -1,8 +1,5 @@
-import * as utils from './utils.js'
-import * as config from './config.js'
-
 import mapdata from './mapdata.js'
-import { Point } from './point.js'
+import { Map } from './map.js'
 
 class User {
 	constructor(n, s, fid) {
@@ -12,115 +9,35 @@ class User {
 	}
 }
 
-class Faction {
-		constructor(id) {
-				this.id = id
-		}
-}
-
-class Unit {
-		constructor(id, f, p) {
-				this.id = id
-				this.fac = f
-				this.pos = p
-				this.unit_types = {}
-		}
-}
-
-class Tile {
-	constructor(x, y, t) {
-		this.x = x
-		this.y = y
-		this.terrain = t
-		this.tax = 2
-		this.buildings = {}
-
-		this.fid = null
-		this.uid = null
-	}
-	set_fac(f) {
-			this.fid = f
-	}
-	set_unit(u) {
-			this.uid = u
-	}
-}
-
-export class Map {
-		constructor(w, h) {
-				this.w = w
-				this.h = h
-				this.factions = {}
-				this.tiles = new Array(h)
-				this.units = []
-				this.uidx = 0
-				for (let y = 0; y < h; y++) {
-						this.tiles[y] = new Array(w)
-						for (let x = 0; x < w; x++) {
-								this.tiles[y][x] = new Tile(x, y, mapdata.terrain[y][x], 2)
-						}
-				}
-				for (let i = 0; i < mapdata.faction_locs.length; i++) this.make_faction(i)
-		}
-		// factions
-		make_faction(id) {
-				let f = new Faction(id)
-				let pos = mapdata.faction_locs[id]
-				this.get_tile(pos).set_fac(id)
-				this.factions[id] = f
-				this.make_unit(f.id, pos)
-		}
-		// units
-		make_unit(f, p) {
-				let u = new Unit(f, this.uidx++, p)
-				this.set_unit_pos(u, p)
-		}
-		set_unit_pos(u, p) {
-				try {
-						if (!this.can_place_unit_at(u, p)) throw 'InvalidUnitLocation'
-						this.get_tile(p).set_unit(u.id)
-						console.log(`Placed unit_${u.id} at (${p.x}, ${p.y}).`)
-				}
-				catch (e) {
-						console.log(`Failed to place unit_${u.id} at (${p.x}, ${p.y}).`)
-				}
-		}
-		can_place_unit_at(u, p) {
-				return true
-		}
-		// tiles
-		in_bounds(p) {
-				return p.x >= 0 && p.y >= 0 && p.x < this.w && p.y < this.h
-		}
-		get_tile(p) {
-				return this.in_bounds(p) ? this.tiles[p.y][p.x] : null
-		}
-		get_all_tiles() {
-				return this.tiles.flat()
-		}
-		get_fac_tiles(f) {
-				return this.get_all_tiles().filter(t => t.fac == f)
-		}
-}
-
 export class Game {
 	constructor() {
 			this.tick = 0
 			this.users = []
-			this.map = new Map(mapdata.width, mapdata.height)
+			this.map = new Map()
 			this.available_facs = Object.keys(this.map.factions)
 	}
     add_player(name, socket) {
+			socket.emit('test')
             let user = new User(name, socket, this.available_facs.pop())
             console.log(`New user '${name}' has joined. Their faction is ${user.fac}.`)
             this.users.push(user)
+			this.initial_update(user)
     }
+	initial_update(user) {
+			user.socket.emit('initial_update', {
+					units: this.map.units,
+					factions: this.map.factions
+			})
+	}
     update() {
-        this.users.forEach(u => {
-                u.socket.emit('update', {
-                    tick: this.tick
-                })
-        })
-        this.tick++
+			console.log(`Tick ${this.tick}`)
+			this.map.update()
+			this.users.forEach(u => {
+					u.socket.emit('update', {
+							tick: this.tick,
+							actions: this.map.actman.actions
+					})
+			})
+			this.tick++
     }
 }

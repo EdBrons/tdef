@@ -3,6 +3,16 @@ import * as PIXI from 'pixi.js'
 const LOADER = PIXI.Loader.shared
 const TEXTURES = PIXI.utils.TextureCache
 
+class Unit extends PIXI.Sprite {
+		constructor() {
+				super(TEXTURES['boat.png'])
+				this.interactive = true
+				this.scale.set(1/4)
+				this.x = 19
+				this.y = 23
+		}
+}
+
 class Background extends PIXI.Sprite {
 		constructor() {
 				super(TEXTURES['map.png'])
@@ -43,11 +53,12 @@ class Camera extends PIXI.Container {
 }
 
 export class Display {
-		constructor() {
+		constructor(c) {
+				this.client = c
 				PIXI.settings.SCALE_MODE = PIXI.SCALE_MODES.NEAREST
 				this.app = new PIXI.Application()
 				document.body.appendChild(this.app.view)
-				LOADER.add('map.png').load(() => this.on_load())
+				LOADER.add('map.png').add('boat.png').load(() => this.on_load())
 		}
 		on_load() {
 				this.resize()
@@ -57,6 +68,18 @@ export class Display {
 				this.camera.addChild(this.background)
 				this.app.stage.addChild(this.camera)
 				this.init_keyboard()
+				this.unit = this.make_unit()
+		}
+		move_unit(uid, dest) {
+				console.log(`Trying to move ${uid} to ${dest.x}, ${dest.y}`)
+		}
+		make_unit() {
+				let unit = new Unit()
+				this.camera.addChild(unit)
+				unit.on('click', (e) => {
+						this.move_unit(0, {x: 0, y: 0})
+				})
+				return unit
 		}
 		init_keyboard() {
 				this.keys = new KeyboardInput()
