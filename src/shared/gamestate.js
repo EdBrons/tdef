@@ -1,9 +1,12 @@
+import EventEmitter from 'events'
+
 import { MapWidth, MapHeight } from './config.js'
 import { Map, Tile } from './map.js'
 import { MapPlaceUnit } from './actions.js'
 
-export class Gamestate {
+export class Gamestate extends EventEmitter {
 		constructor() {
+				super()
 				this.turn = 0
 				this.map = new Map(MapWidth, MapHeight)
 				this.past_actions = []
@@ -26,6 +29,7 @@ export class Gamestate {
 				for (let i = 0; i < this.actions.length; i++) {
 						let a = this.actions.shift()
 						a.execute(this.map)
+						this.emit(a.name, a)
 						this.past_actions[this.turn].push(a)
 				}
 				this.turn++

@@ -4,12 +4,13 @@ const LOADER = PIXI.Loader.shared
 const TEXTURES = PIXI.utils.TextureCache
 
 class Unit extends PIXI.Sprite {
-		constructor() {
+		constructor(u_id, pos) {
 				super(TEXTURES['boat.png'])
 				this.interactive = true
 				this.scale.set(1/4)
-				this.x = 20
-				this.y = 20
+				this.unit_id = u_id
+				this.x = pos.x
+				this.y = pos.y
 		}
 }
 
@@ -68,7 +69,9 @@ export class Display {
 				this.camera.addChild(this.background)
 				this.app.stage.addChild(this.camera)
 				this.init_keyboard()
-				this.unit = this.make_unit()
+				this.client.gamestate.on('MapPlaceUnit', (a) => {
+						const u = this.make_unit(a.unit_id, a.at)
+				})
 		}
 		move_unit(uid, dest) {
 				console.log(`Trying to move ${uid} to ${dest.x}, ${dest.y}`)
@@ -76,8 +79,8 @@ export class Display {
 		make_unit(uid, pos) {
 				let unit = new Unit(uid, pos)
 				this.camera.addChild(unit)
+				// add event handlers
 				unit.on('click', (e) => {
-						this.move_unit(0, {x: 0, y: 0})
 				})
 				return unit
 		}

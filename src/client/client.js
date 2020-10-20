@@ -10,11 +10,11 @@ import * as PIXI from 'pixi.js'
 export class Client {
 		constructor() {
 				this.gamestate = new Gamestate()
+				this.display = new Display(this)
 				this.socket = io()
 				this.login = new Login(this.socket, () => this.on_login())
 		}
 		on_login() {
-				this.display = new Display(this)
 				this.socket.on('initial_update', (data) => {
 						for (let turn in data.past_actions) {
 								let pa = data.past_actions[turn]
