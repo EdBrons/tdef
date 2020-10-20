@@ -1,3 +1,6 @@
+export const MapWidth = 200
+export const MapHeight = 130
+
 export const Terrain = {}
 
 Terrain.Types = { Water: 0, Beach: 1, Plains: 2, Forest: 3, Highland: 4, Count: 5}

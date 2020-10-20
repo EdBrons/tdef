@@ -2,7 +2,6 @@ import express from 'express'
 import http from 'http'
 import path from 'path'
 import IO from 'socket.io'
-// import { port } from './config.js'
 
 const app = express()
 const server = http.createServer(app)

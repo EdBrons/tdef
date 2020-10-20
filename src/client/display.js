@@ -1,17 +1,15 @@
 import * as PIXI from 'pixi.js'
-import { Unit } from '../shared/map.js'
 
 const LOADER = PIXI.Loader.shared
 const TEXTURES = PIXI.utils.TextureCache
 
 class Unit extends PIXI.Sprite {
-		constructor(id, fac, pos) {
+		constructor() {
 				super(TEXTURES['boat.png'])
-				this.data = new Unit(id, fac, pos)
 				this.interactive = true
 				this.scale.set(1/4)
-				this.x = data.pos.x
-				this.y = data.pos.y
+				this.x = 20
+				this.y = 20
 		}
 }
 

@@ -1,43 +1,34 @@
-import mapdata from './mapdata.js'
-import { Map } from './map.js'
+import { Gamestate } from './gamestate.js'
 
 class User {
-	constructor(n, s, fid) {
-		this.name = n
-		this.socket = s
-		this.fac = fid
+	constructor(name, socket, faction_id) {
+		this.name = name
+		this.socket = socket
+		this.faction_id = faction_id
 	}
 }
 
 export class Game {
 	constructor() {
-			this.tick = 0
+			this.gamestate = new Gamestate()
+			this.gamestate.load_default()
 			this.users = []
-			this.map = new Map()
-			this.available_facs = Object.keys(this.map.factions)
 	}
     add_player(name, socket) {
-			socket.emit('test')
-            let user = new User(name, socket, this.available_facs.pop())
-            console.log(`New user '${name}' has joined. Their faction is ${user.fac}.`)
+            const user = new User(name, socket, 0)
             this.users.push(user)
-			this.initial_update(user)
-    }
-	initial_update(user) {
+            console.log(`New user '${name}' has joined.`)
 			user.socket.emit('initial_update', {
-					units: this.map.units,
-					factions: this.map.factions
+					past_actions: this.gamestate.past_actions
 			})
-	}
+    }
     update() {
-			console.log(`Tick ${this.tick}`)
-			this.map.update()
-			this.users.forEach(u => {
-					u.socket.emit('update', {
-							tick: this.tick,
-							actions: this.map.actman.actions
+			// do something
+			for (const user of this.users) {
+					user.socket.emit('update', {
+							actions: this.gamestate.actions
 					})
-			})
-			this.tick++
+			}
+			this.gamestate.do_turn()
     }
 }
