@@ -11,6 +11,14 @@ class Unit extends PIXI.Sprite {
 				this.unit_id = u_id
 				this.x = pos.x
 				this.y = pos.y
+				this.selected = false
+				this.on('click', (e) => {
+						this.toggle_select()
+				})
+		}
+		toggle_select() {
+				this.tint = this.tint == 0xFF0000 ? 0xFFFFFF : 0xFF0000;
+				this.selected = !this.selected
 		}
 }
 
@@ -18,11 +26,6 @@ class Background extends PIXI.Sprite {
 		constructor() {
 				super(TEXTURES['map.png'])
 				this.interactive = true
-				this.on('click', (e) => {
-						let local_pos = e.data.getLocalPosition(this)
-						let global_pos = e.data.global
-						console.log(this.to_game_pos(local_pos))
-				})
 		}
 		to_game_pos(pos) {
 				return {
@@ -66,12 +69,36 @@ export class Display {
 				window.onresize = () => this.on_resize()
 				this.camera = new Camera()
 				this.background = new Background()
+				this.units = []
+
+				this.background.on('click', (e) => {
+						let local_pos = e.data.getLocalPosition(this.background)
+						local_pos.x = Math.floor(local_pos.x)
+						local_pos.y = Math.floor(local_pos.y)
+						let global_pos = e.data.global
+						if (this.selected_unit != null) {
+								this.client.move_unit(this.selected_unit.unit_id, local_pos)
+						}
+				})
+
 				this.camera.addChild(this.background)
 				this.app.stage.addChild(this.camera)
 				this.init_keyboard()
+
+				this.selected_unit = null
+
 				this.client.gamestate.on('MapPlaceUnit', (a) => {
 						const u = this.make_unit(a.unit_id, a.at)
 				})
+				this.client.gamestate.on('MapMoveUnit', (a) => {
+						const u = this.get_unit_sprite(a.unit_id)
+						console.log(a)
+						u.x = a.to.x
+						u.y = a.to.y
+				})
+		}
+		get_unit_sprite(u_id) {
+				return this.units.find(u => u.unit_id == u_id)
 		}
 		move_unit(uid, dest) {
 				console.log(`Trying to move ${uid} to ${dest.x}, ${dest.y}`)
@@ -81,7 +108,9 @@ export class Display {
 				this.camera.addChild(unit)
 				// add event handlers
 				unit.on('click', (e) => {
+						this.selected_unit = unit.selected ? unit : null
 				})
+				this.units.push(unit)
 				return unit
 		}
 		init_keyboard() {

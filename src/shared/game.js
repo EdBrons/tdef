@@ -1,3 +1,4 @@
+import { from_json } from './actions.js'
 import { Gamestate } from './gamestate.js'
 
 class User {
@@ -20,6 +21,9 @@ export class Game {
             console.log(`New user '${name}' has joined.`)
 			user.socket.emit('initial_update', {
 					past_actions: this.gamestate.past_actions
+			})
+			user.socket.on('action', (data) => {
+					this.gamestate.add_action(from_json(data.a))
 			})
     }
     update() {

@@ -1,6 +1,6 @@
 import io from 'socket.io-client'
 
-import { from_json } from '../shared/actions.js'
+import { from_json, MapPlaceUnit, MapMoveUnit } from '../shared/actions.js'
 import { Gamestate } from '../shared/gamestate.js'
 import { Login } from './login.js'
 import { Display } from './display.js'
@@ -14,6 +14,14 @@ export class Client {
 				this.socket = io()
 				this.login = new Login(this.socket, () => this.on_login())
 		}
+		move_unit(u_id, dest) {
+				let from_tile = this.gamestate.map.unit_tile(u_id)
+				let from = {
+						x: from_tile.x,
+						y: from_tile.y
+				}
+				this.socket.emit('action', { a: new MapMoveUnit(u_id, from, dest) })
+		}
 		on_login() {
 				this.socket.on('initial_update', (data) => {
 						for (let turn in data.past_actions) {
@@ -25,7 +33,9 @@ export class Client {
 						}
 				})
 				this.socket.on('update', (data) => {
-						this.gamestate.add_actions(data.actions)
+						for (const a of data.actions) {
+								this.gamestate.add_action(from_json(a))
+						}
 						this.gamestate.do_turn()
 				})
 		}

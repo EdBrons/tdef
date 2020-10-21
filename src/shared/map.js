@@ -36,4 +36,8 @@ export class Tile {
 				this.y = y
 				this.unit_id = null
 		}
+		set_unit(u_id) {
+				console.log(`setting unit_id of (${this.x}, ${this.y}) to ${u_id}`)
+				this.unit_id = u_id
+		}
 }
