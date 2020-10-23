@@ -7,7 +7,7 @@ class Unit extends PIXI.Sprite {
 		constructor(u_id, pos) {
 				super(TEXTURES['boat.png'])
 				this.interactive = true
-				this.scale.set(1/4)
+				this.scale.set(1/8)
 				this.unit_id = u_id
 				this.x = pos.x
 				this.y = pos.y

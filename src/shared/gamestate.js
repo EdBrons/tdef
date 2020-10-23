@@ -28,6 +28,7 @@ export class Gamestate extends EventEmitter {
 				this.past_actions[this.turn] = []
 				for (let i = 0; i < this.actions.length; i++) {
 						let a = this.actions.shift()
+						if (!a.can_execute(this.map)) continue
 						a.execute(this.map)
 						this.emit(a.name, a)
 						this.past_actions[this.turn].push(a)
