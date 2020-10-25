@@ -6,6 +6,7 @@ const TEXTURES = PIXI.utils.TextureCache
 class Unit extends PIXI.Sprite {
 		constructor(u_id, pos) {
 				super(TEXTURES['boat.png'])
+				console.log('making unit sprite')
 				this.interactive = true
 				this.scale.set(1/8)
 				this.unit_id = u_id
@@ -38,11 +39,16 @@ class Background extends PIXI.Sprite {
 class Camera extends PIXI.Container {
 		constructor() {
 				super()
-				this.scale.set(15)
+				this.scale.set(50)
 		}
 		move_by(dx, dy) {
 				this.x -= dx
 				this.y -= dy
+				this.bound()
+		}
+		move_to_tile(x, y) {
+				this.x = -x * this.scale.x
+				this.y = -y * this.scale.y
 				this.bound()
 		}
 		scale_by(ds) {
@@ -57,14 +63,14 @@ class Camera extends PIXI.Container {
 }
 
 export class Display {
-		constructor(c) {
+		constructor(c, cb) {
 				this.client = c
 				PIXI.settings.SCALE_MODE = PIXI.SCALE_MODES.NEAREST
 				this.app = new PIXI.Application()
 				document.body.appendChild(this.app.view)
-				LOADER.add('map.png').add('boat.png').load(() => this.on_load())
+				LOADER.add('map.png').add('boat.png').load(() => this.on_load(cb))
 		}
-		on_load() {
+		on_load(cb) {
 				this.resize()
 				window.onresize = () => this.on_resize()
 				this.camera = new Camera()
@@ -76,6 +82,7 @@ export class Display {
 						local_pos.x = Math.floor(local_pos.x)
 						local_pos.y = Math.floor(local_pos.y)
 						let global_pos = e.data.global
+						console.log(local_pos)
 						if (this.selected_unit != null) {
 								this.client.move_unit(this.selected_unit.unit_id, local_pos)
 						}
@@ -85,17 +92,23 @@ export class Display {
 				this.app.stage.addChild(this.camera)
 				this.init_keyboard()
 
+				this.camera.move_to_tile(20, 12)
+
 				this.selected_unit = null
 
 				this.client.gamestate.on('MapPlaceUnit', (a) => {
+						console.log('on map place unit')
 						const u = this.make_unit(a.unit_id, a.at)
 				})
 				this.client.gamestate.on('MapMoveUnit', (a) => {
+						console.log('on map move unit')
 						const u = this.get_unit_sprite(a.unit_id)
 						console.log(a)
 						u.x = a.to.x
 						u.y = a.to.y
 				})
+
+				cb()
 		}
 		get_unit_sprite(u_id) {
 				return this.units.find(u => u.unit_id == u_id)
