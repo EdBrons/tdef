@@ -27,7 +27,6 @@ export class Client {
 				this.socket.on('initial_update', (data) => {
 						for (let pa of data.past_actions) {
 								for (const a of pa) {
-										console.log('action: ', a)
 										this.gamestate.add_action(from_json(a))
 										this.gamestate.do_turn()
 								}

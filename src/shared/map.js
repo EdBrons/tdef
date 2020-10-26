@@ -35,9 +35,14 @@ export class Tile {
 				this.x = x
 				this.y = y
 				this.unit_id = null
+				this.fac_id = null
 		}
 		set_unit(u_id) {
 				console.log(`setting unit_id of (${this.x}, ${this.y}) to ${u_id}`)
 				this.unit_id = u_id
+		}
+		set_fac(f_id) {
+				console.log(`setting unit_id of (${this.x}, ${this.y}) to ${f_id}`)
+				this.fac_id = f_id
 		}
 }

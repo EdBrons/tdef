@@ -13,7 +13,7 @@ export class Gamestate extends EventEmitter {
 				this.actions = []
 		}
 		load_default() {
-				const place_unit = new MapPlaceUnit(0, {x: 0, y: 0})
+				const place_unit = new MapPlaceUnit(0, {x: 25, y: 17})
 				this.add_action(place_unit)
 		}
 		add_action(a) {

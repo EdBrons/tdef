@@ -1,7 +1,3 @@
-export class MapChange {
-		// dumb
-}
-
 export let to_json = (a) => {
 		let obj = {}
 		for (p in this) {
@@ -26,6 +22,9 @@ export let from_json = (obj) => {
 		return a
 }
 
+export class MapChange {
+}
+
 export class MapMoveUnit extends MapChange {
 		constructor(u_id, from, to) {
 				super()
@@ -43,10 +42,6 @@ export class MapMoveUnit extends MapChange {
 				m.tile(this.to).set_unit(this.unit_id)
 				console.log(`Moved U-${this.unit_id} from (${this.from.x}, ${this.from.y}) to (${this.to.x}, ${this.to.y}).`)
 		}
-		reverse(m) {
-				m.tile(this.from).set_unit(this.unit_id)
-				m.tile(this.to).set_unit(this.null)
-		}
 }
 
 export class MapPlaceUnit extends MapChange {
@@ -63,8 +58,20 @@ export class MapPlaceUnit extends MapChange {
 				m.tile(this.at).set_unit(this.unit_id)
 				console.log(`Placed U-${this.unit_id} at (${this.at.x}, ${this.at.y}).`)
 		}
-		reverse(m) {
-				m.tile(this.at).set_unit(null)
-		}
 }
 
+export class MapClaimTile extends MapChange {
+		constructor(f_id, at) {
+				super()
+				this.name = 'MapClaimTile'
+				this.fac_id = f_id
+				this.at = at
+		}
+		can_execute(m) {
+				return true
+		}
+		execute(m) {
+				m.tile(this.at).set_fac(this.fac_id)
+				console.log(`Claimed tile (${this.at.x}, ${this.at.y}) for F-${this.unit_id}.`)
+		}
+}

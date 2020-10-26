@@ -6,7 +6,6 @@ const TEXTURES = PIXI.utils.TextureCache
 class Unit extends PIXI.Sprite {
 		constructor(u_id, pos) {
 				super(TEXTURES['boat.png'])
-				console.log('making unit sprite')
 				this.interactive = true
 				this.scale.set(1/8)
 				this.unit_id = u_id
@@ -82,7 +81,6 @@ export class Display {
 						local_pos.x = Math.floor(local_pos.x)
 						local_pos.y = Math.floor(local_pos.y)
 						let global_pos = e.data.global
-						console.log(local_pos)
 						if (this.selected_unit != null) {
 								this.client.move_unit(this.selected_unit.unit_id, local_pos)
 						}
@@ -97,13 +95,10 @@ export class Display {
 				this.selected_unit = null
 
 				this.client.gamestate.on('MapPlaceUnit', (a) => {
-						console.log('on map place unit')
 						const u = this.make_unit(a.unit_id, a.at)
 				})
 				this.client.gamestate.on('MapMoveUnit', (a) => {
-						console.log('on map move unit')
 						const u = this.get_unit_sprite(a.unit_id)
-						console.log(a)
 						u.x = a.to.x
 						u.y = a.to.y
 				})
@@ -112,9 +107,6 @@ export class Display {
 		}
 		get_unit_sprite(u_id) {
 				return this.units.find(u => u.unit_id == u_id)
-		}
-		move_unit(uid, dest) {
-				console.log(`Trying to move ${uid} to ${dest.x}, ${dest.y}`)
 		}
 		make_unit(uid, pos) {
 				let unit = new Unit(uid, pos)
