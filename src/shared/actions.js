@@ -23,6 +23,15 @@ export let from_json = (obj) => {
 }
 
 export class MapChange {
+		constructor(deps = []) {
+				this.deps = deps
+		}
+		can_execute(m) {
+				return this.deps.find(d => !d.can_execute(m)) != null
+		}
+		execute(m) {
+				this.deps.forEach(d => d.execute(m))
+		}
 }
 
 export class MapMoveUnit extends MapChange {
@@ -57,6 +66,21 @@ export class MapPlaceUnit extends MapChange {
 		execute(m) {
 				m.tile(this.at).set_unit(this.unit_id)
 				console.log(`Placed U-${this.unit_id} at (${this.at.x}, ${this.at.y}).`)
+		}
+}
+
+export class MapMakeUnit extends MapChange {
+		constructor(u) {
+				super([ new MapPlaceUnit(u.unit_id, u.pos) ])
+				this.name = 'MapMakeUnit'
+				this.unit = u
+		}
+		can_execute(m) {
+				return super.can_execute(m)
+		}
+		execute(m) {
+				m.units.append(this.unit)
+				super.execute(m)
 		}
 }
 

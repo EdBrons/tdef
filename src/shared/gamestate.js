@@ -1,8 +1,8 @@
 import EventEmitter from 'events'
 
 import { MapWidth, MapHeight } from './config.js'
-import { Map, Tile } from './map.js'
-import { MapPlaceUnit } from './actions.js'
+import { Map, Tile, Unit } from './map.js'
+import { MapPlaceUnit, MapMakeUnit } from './actions.js'
 
 export class Gamestate extends EventEmitter {
 		constructor() {
@@ -13,8 +13,9 @@ export class Gamestate extends EventEmitter {
 				this.actions = []
 		}
 		load_default() {
-				const place_unit = new MapPlaceUnit(0, {x: 25, y: 17})
-				this.add_action(place_unit)
+				const make_unit = new MapMakeUnit(new Unit(0, {x: 25, y: 17}))
+				// const place_unit = new MapPlaceUnit(0, {x: 25, y: 17})
+				this.add_action(make_unit)
 		}
 		add_action(a) {
 				this.actions.push(a)

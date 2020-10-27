@@ -3,6 +3,7 @@ export class Map {
 				this.width = w
 				this.height = h
 				this._tiles = new Array(h)
+				this._units = []
 				for (let y = 0; y < this.height; y++) {
 						this._tiles[y] = new Array(w)
 						for (let x = 0; x < this.width; x++) {
@@ -44,5 +45,13 @@ export class Tile {
 		set_fac(f_id) {
 				console.log(`setting unit_id of (${this.x}, ${this.y}) to ${f_id}`)
 				this.fac_id = f_id
+		}
+}
+
+export class Unit {
+		constructor(u_id, f_id, p) {
+				this.unit_id = u_id
+				this.f_id = f_id
+				this.pos = p
 		}
 }
