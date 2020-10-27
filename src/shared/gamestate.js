@@ -1,39 +1,60 @@
 import EventEmitter from 'events'
 
-import { MapWidth, MapHeight } from './config.js'
-import { Map, Tile, Unit } from './map.js'
-import { MapPlaceUnit, MapMakeUnit } from './actions.js'
-
 export class Gamestate extends EventEmitter {
 		constructor() {
 				super()
 				this.turn = 0
-				this.map = new Map(MapWidth, MapHeight)
 				this.past_actions = []
 				this.actions = []
 		}
 		load_default() {
-				const make_unit = new MapMakeUnit(new Unit(0, {x: 25, y: 17}))
-				// const place_unit = new MapPlaceUnit(0, {x: 25, y: 17})
-				this.add_action(make_unit)
-		}
-		add_action(a) {
-				this.actions.push(a)
-		}
-		add_actions(actions) {
-				for (const a of actions) {
-						this.add_action(a)
-				}
+				this.turn = 0
+				this.map = new Map()
+				this.map.init_from_json({width: 200, height: 200})
 		}
 		do_turn() {
-				this.past_actions[this.turn] = []
-				for (let i = 0; i < this.actions.length; i++) {
-						let a = this.actions.shift()
-						if (!a.can_execute(this.map)) continue
-						a.execute(this.map)
-						this.emit(a.name, a)
-						this.past_actions[this.turn].push(a)
-				}
 				this.turn++
+		}
+}
+
+export class Map {
+		init_from_json(json) {
+				this.width = json.width
+				this.height = json.height
+				this._tiles = new Array(this.height * this.width)
+				for (let y = 0; y < this.height; y++) {
+						for (let x = 0; x < this.width; x++) {
+								const tile = new Tile()
+								tile.init_from_json(
+										json.tiles ? 
+										json.tiles[x + y * this.width] : 
+										{x: x, y: y, unit_id: null, fac_id: null}
+								)
+								this._tiles[x + y * this.width] = tile
+						}
+				}
+		}
+		is_adjs(p, q) {
+				return Math.abs(p.x - q.x) + Math.abs(p.y - q.y) == 1
+		}
+		get_tile(p) {
+				return this._tiles[p.x + p.y * this.width]
+		}
+}
+
+export class Tile {
+		init_from_json(json) {
+				this.x = json.x
+				this.y = json.y
+				this.unit_id = json.unit_id | null
+				this.fac_id = json.fac_id | null
+		}
+}
+
+export class Unit {
+		init_from_json(json) {
+				this.unit_id = json.unit_id
+				this.fac_id = json.fac_id
+				this.pos = json.pos
 		}
 }
