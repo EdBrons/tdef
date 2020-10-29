@@ -1,5 +1,8 @@
 import * as PIXI from 'pixi.js'
 
+import { KeyboardInput } from './keyboard.js'
+import { Camera } from './camera.js'
+
 const LOADER = PIXI.Loader.shared
 const TEXTURES = PIXI.utils.TextureCache
 PIXI.settings.SCALE_MODE = PIXI.SCALE_MODES.NEAREST
@@ -7,32 +10,15 @@ PIXI.settings.SCALE_MODE = PIXI.SCALE_MODES.NEAREST
 class Background extends PIXI.Sprite {
 		constructor() {
 				super(TEXTURES['map.png'])
+				this.scale.set(12)
+				this.interactive = true
 		}
 }
 
-class Camera extends PIXI.Container {
-		constructor() {
-				super()
-				this.scale.set(50)
-		}
-		move_by(dx, dy) {
-				this.x -= dx
-				this.y -= dy
-				this.bound()
-		}
-		move_to_tile(x, y) {
-				this.x = -x * this.scale.x
-				this.y = -y * this.scale.y
-				this.bound()
-		}
-		scale_by(ds) {
-				this.scale.set(this.scale.x + ds, this.scale.y + ds)
-		}
-		bound() {
-				this.x = Math.min(this.x, 0)
-				this.y = Math.min(this.y, 0)
-				this.x = Math.max(window.innerWidth - this.width, this.x)
-				this.y = Math.max(window.innerHeight - this.height, this.y)
+class Unit extends PIXI.Sprite {
+		constructor(texture) {
+				super(texture)
+				this.interactive = true
 		}
 }
 
@@ -41,21 +27,38 @@ export class Display {
 				this.client = client
 				this.app = new PIXI.Application()
 				document.body.appendChild(this.app.view)
-				LOADER.add('map.png').add('boat.png').load(() => this.on_load(on_load))
+				LOADER.add('map.png').add('sheet.png').load(() => this.on_load(on_load))
 		}
 		on_load(on_load) {
 				this.resize()
 				window.onresize = () => this.on_resize()
-
 				this.camera = new Camera()
 				this.background = new Background()
-
-				this.camera.addChild(this.background)
-				this.app.stage.addChild(this.camera)
-
-				this.camera.move_to_tile(20, 12)
-
 				this.init_keyboard()
+
+				TEXTURES['sheet.png'].frame = new PIXI.Rectangle(196, 66, 12, 12)
+				this.city_texture = TEXTURES['sheet.png']
+
+				TEXTURES['sheet.png'].frame = new PIXI.Rectangle(79, 66, 12, 12)
+				this.boat_texture = TEXTURES['sheet.png']
+
+				const u = new Unit(this.boat_texture)
+				u.x = 53 * 12
+				u.y = 66 * 12
+
+				this.background.on('click', (e) => {
+						let pos = e.data.getLocalPosition(this.background)
+						pos.x = Math.floor(pos.x)
+						pos.y = Math.floor(pos.y)
+						console.log(pos)
+				})
+
+				this.camera.set_background(this.background)
+				this.app.stage.addChild(this.camera)
+				this.camera.addChild(u)
+
+				this.camera.scale.set(1.5)
+				this.camera.move_to_tile(40, 60)
 
 				on_load()
 		}
@@ -68,56 +71,14 @@ export class Display {
 		init_keyboard() {
 				this.keys = new KeyboardInput()
 				const move_speed = 6
-				const scale_speed = .1
+				const scale_speed = .05
 				// keyboard movement
 				this.keys.add_cb(38, () => this.camera.move_by(0, -move_speed))
 				this.keys.add_cb(37, () => this.camera.move_by(-move_speed, 0))
 				this.keys.add_cb(40, () => this.camera.move_by(0, move_speed))
 				this.keys.add_cb(39, () => this.camera.move_by(move_speed, 0))
 				// scale
-				this.keys.add_cb(90, () => this.camera.scale_by(scale_speed))
-				this.keys.add_cb(88, () => this.camera.scale_by(-scale_speed))
-		}
-}
-
-// TODO: make combos blocking
-// example: [shift + w] should not trigger a [w] event
-class KeyboardInput {
-		constructor() {
-				this.keys_down = {}
-				this.cbs = {}
-				// 30 times a second
-				this.delay = 1000 / 30
-				addEventListener("keydown", (e) => {this.keys_down[e.keyCode] = true})
-				addEventListener("keyup", (e) => {this.keys_down[e.keyCode] = false})
-				this._loop_helper()
-		}
-		add_cb(k, f) {
-				if (!this.cbs[k]) { 
-						this.cbs[k] = [] 
-				}
-				if (!Array.isArray(k)) { 
-						k = [k] 
-				}
-				this.cbs[k].push(f)
-		}
-		is_active(keys) {
-				for (const k of keys) {
-						if (!(k in this.keys_down)) return false
-						if (!this.keys_down[k]) return false
-				}
-				return true
-		}
-		_loop_helper() {
-				this._loop()
-				setTimeout(() => this._loop_helper(), this.delay)
-		}
-		_loop() {
-				for (const keys_str in this.cbs) {
-						const keys = keys_str.split(",")
-						if (this.cbs[keys] != undefined && this.is_active(keys)) {
-								for (const f of this.cbs[keys]) f()
-						}
-				}
+				// this.keys.add_cb(90, () => this.camera.scale_by(scale_speed))
+				// this.keys.add_cb(88, () => this.camera.scale_by(-scale_speed))
 		}
 }
