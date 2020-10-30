@@ -1,0 +1,5 @@
+to build client run:
+npm run start:client
+
+to run server run:
+npm run start:server
